@@ -130,7 +130,7 @@ main {
 .bento-item > div {
 	background-color: #fff;
 	border-radius: 0.5rem;
-	padding: 1rem;
+	padding: 12px;
 	height: 100%;
 }
 
@@ -198,7 +198,7 @@ main {
 	gap: 12px;
 }
 
-.bento-4 .blue-heading {
+.blue-heading {
 	color: #118ab2;
 	font-family: var(--font-pacifico);
 	font-size: 24px;
@@ -227,9 +227,49 @@ main {
 	font-size: 24px;
 }
 
+.upcoming-milestones {
+	flex-grow: 1;
+}
+
+.milestone-item {
+	background-color: #989898;
+	border-radius: 8px;
+	color: #fff;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	flex-direction: column;
+}
+
+.milestone-title {
+	font-weight: 600;
+}
+
+.milestone-date {
+	font-size: 14px;
+}
+
 .bento-5 {
 	grid-column: 1 / 4;
 	grid-row: 3 / 5;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.bento-5 > div {
+	border: 1px solid #000;
+	flex-shrink: 1;
+	height: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.recent-milestones {
+	flex-grow: 1;
 }
 
 .bento-6 {
@@ -337,14 +377,6 @@ main {
 }
 
 /* Milestone Overview Section */
-
-.recent-milestones {
-	background-color: #fff;
-	padding: 12px 16px;
-	border: #000 solid 1px;
-	border-radius: 8px;
-	max-width: 300px;
-}
 
 .milestone-overview {
 	background-color: #fff;
