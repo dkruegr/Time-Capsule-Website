@@ -4,75 +4,74 @@
 	--font-quantico: "Quantico", sans-serif;
 	--font-pacifico: "Pacifico", cursive;
 	--font-poppins: "Poppins", sans-serif;
+	--color-background: #e3d8c5;
 }
 
-/* Basic styling */
 body {
 	font-family: var(--font-poppins);
-	padding: 32px;
-	background-color: #e3d8c5;
+	background-color: var(--color-background);
 }
 
-/* Header Styles */
-.header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	/* background-color: #; Adjust as needed */
-	padding: 16px 32px; /* Space around header content */
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow */
+header {
+	padding: 1rem 2rem;
 	border-bottom: 1px solid #000;
 }
 
-.header-logo img {
-	height: 50px; /* Adjust to your logo size */
-	cursor: pointer; /* Makes it clickable */
+.header-content {
+	display: flex;
+	margin: 0 auto;
+	justify-content: space-between;
+	align-items: center;
+	max-width: 90rem;
 }
 
-/* .header-nav ul {
-    display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+.header-left {
+	background-color: #d39175;
+	border-radius: 0.5rem;
 }
 
-.header-nav ul li {
-    margin-left: 20px; /* Space between links
-}  */
-
-.header-nav ul li a {
-	text-decoration: none;
-	color: #333; /* Adjust to desired text color */
-	font-weight: bold;
-	transition: color 0.3s ease; /* Smooth hover effect */
+.header-left .desktop {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	font-size: 0.875rem;
+	font-weight: 400;
+	padding: 0.625rem;
 }
 
-.header-nav ul li a:hover {
-	color: #007bff; /* Adjust to desired hover color */
+.header-left .other {
+	display: none;
+}
+
+.header-date {
+	font-family: var(--font-pacifico);
+	font-size: 1.5rem;
+	font-weight: 400;
+}
+
+.header-center {
+	font-family: var(--font-quantico);
+	font-size: 1.5rem;
+	font-weight: 400;
+}
+
+.header-center span {
+	font-family: var(--font-pacifico);
+	font-size: 1.25rem;
 }
 
 .header-cta {
 	background: linear-gradient(to right, #e9e1cb, #d1ab95);
-	padding-left: 24px;
-	padding-right: 24px;
-	padding-top: 12px;
-	padding-bottom: 12px;
+	padding: 0.75rem 1.5rem;
 	display: flex;
+	gap: 0.625rem;
 	align-items: center;
 	justify-content: center;
-	border: 1px solid #000;
-	border-radius: 5px; /* Optional: Rounds the corners */
-	cursor: pointer; /* Makes it clickable */
-	gap: 10px;
-	font-weight: 600;
-}
-
-/* .pacifico {
-    color: #007bff;
-} */
-
-.header-pacifico {
-	color: #007bff;
+	border: 0.0625rem solid #000;
+	border-radius: 0.5rem;
+	cursor: pointer;
+	font-size: 1.25rem;
+	font-weight: 500;
 }
 
 /* Floating button - bottom right corner */
@@ -754,4 +753,39 @@ body {
 
 .footer-item :hover {
 	text-decoration: underline; /* Add underline on hover */
+}
+
+/* Breakpoints are desktop first */
+/* you can change the tablet breakpoint if you want */
+@media (max-width: 1024px) {
+	.header-left .desktop {
+		display: none;
+	}
+
+	.header-left .other {
+		display: block;
+		padding: 0.5rem;
+		font-family: var(--font-pacifico);
+		font-size: 0.875rem;
+		font-weight: 400;
+	}
+
+	.header-center {
+		font-size: 0.875rem;
+	}
+
+	.header-center span {
+		font-size: 0.875rem;
+	}
+
+	.header-cta {
+		padding: 0.25rem;
+	}
+
+	.header-cta .desktop {
+		display: none;
+	}
+}
+
+@media (max-width: 640px) {
 }
