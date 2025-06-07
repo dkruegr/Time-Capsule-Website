@@ -167,3 +167,122 @@ document
 document.querySelectorAll(".overlayadd, .overlayedit, .overlayupload").forEach((overlay) => {
 	initOutsideClickClose(overlay);
 });
+
+// -------------------------------------
+// Calendar Functionality
+// -------------------------------------
+
+function generateCalendar() {
+	const now = new Date();
+	const currentYear = now.getFullYear();
+	const currentMonth = now.getMonth();
+	const currentDate = now.getDate();
+
+	const monthNames = [
+		"January",
+		"February",
+		"March",
+		"April",
+		"May",
+		"June",
+		"July",
+		"August",
+		"September",
+		"October",
+		"November",
+		"December",
+	];
+
+	const dayHeaders = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+
+	const monthHeader = document.getElementById("calendar-month-header");
+	if (monthHeader) {
+		monthHeader.textContent = monthNames[currentMonth];
+	}
+
+	const calendarGrid = document.getElementById("calendar-days-grid");
+	if (!calendarGrid) return;
+
+	calendarGrid.innerHTML = "";
+
+	dayHeaders.forEach((day) => {
+		const dayHeader = document.createElement("div");
+		dayHeader.className = "day-header";
+		dayHeader.textContent = day;
+		calendarGrid.appendChild(dayHeader);
+	});
+
+	const firstDay = new Date(currentYear, currentMonth, 1);
+	const lastDay = new Date(currentYear, currentMonth + 1, 0);
+	const daysInMonth = lastDay.getDate();
+	const startingDayOfWeek = firstDay.getDay();
+	const prevMonth = new Date(currentYear, currentMonth - 1, 0);
+	const daysInPrevMonth = prevMonth.getDate();
+
+	let prevMonthDaysToShow = startingDayOfWeek === 0 ? 7 : startingDayOfWeek;
+
+	for (let i = prevMonthDaysToShow - 1; i >= 0; i--) {
+		const dayCell = document.createElement("div");
+		dayCell.className = "day-cell inv-month";
+		dayCell.textContent = daysInPrevMonth - i;
+		calendarGrid.appendChild(dayCell);
+	}
+
+	for (let day = 1; day <= daysInMonth; day++) {
+		const dayCell = document.createElement("div");
+		dayCell.className = "day-cell";
+		dayCell.textContent = day;
+
+		if (day === currentDate) {
+			dayCell.classList.add("current-day");
+		}
+
+		const dayOfWeek = new Date(currentYear, currentMonth, day).getDay();
+		if (dayOfWeek === 0 || dayOfWeek === 6) {
+			dayCell.classList.add("colored");
+		}
+
+		calendarGrid.appendChild(dayCell);
+	}
+	const totalCellsFilled = prevMonthDaysToShow + daysInMonth;
+	const remainingCells = 42 - totalCellsFilled; // 6 rows × 7 days = 42 total cells
+
+	for (let day = 1; day <= remainingCells; day++) {
+		const dayCell = document.createElement("div");
+		dayCell.className = "day-cell inv-month";
+		dayCell.textContent = day;
+		calendarGrid.appendChild(dayCell);
+	}
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+	generateCalendar();
+});
+
+// Update calendar monthly
+setInterval(() => {
+	const now = new Date();
+	const monthHeader = document.getElementById("calendar-month-header");
+	if (monthHeader) {
+		const monthNames = [
+			"January",
+			"February",
+			"March",
+			"April",
+			"May",
+			"June",
+			"July",
+			"August",
+			"September",
+			"October",
+			"November",
+			"December",
+		];
+		const currentMonthName = monthNames[now.getMonth()];
+
+		// Only regenerate if month has changed
+		if (monthHeader.textContent !== currentMonthName) {
+			generateCalendar();
+		}
+	}
+}, 60000);

@@ -287,9 +287,95 @@ main {
 	grid-row: 3 / 5;
 }
 
+.calendar-container {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.calendar-header {
+	margin-bottom: 8px;
+}
+
+.calendar-wrapper {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.calendar-month-header {
+	background-color: #000;
+	color: white;
+	text-align: center;
+	padding: 2.5px 0;
+	border-radius: 4px;
+	margin-bottom: 12px;
+}
+
+.days-grid {
+	flex: 1;
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap: 8px;
+}
+
+.day-header {
+	background-color: #000;
+	color: white;
+	text-align: center;
+	padding: 4px 2px;
+	font-size: 12px;
+	border-radius: 4px;
+	height: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.day-cell {
+	border: 1px solid #ddd;
+	text-align: center;
+	padding: 4px;
+	font-size: 14px;
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+}
+
+.day-cell:hover {
+	background-color: #f0f0f0;
+}
+
+.day-cell.inv-month {
+	color: #ccc;
+	background-color: #f8f8f8;
+}
+
+.day-cell.colored {
+	color: #118ab2;
+}
+
+.day-cell.current-day {
+	background-color: #118ab2;
+	color: white;
+	font-weight: bold;
+}
+
 .bento-9 {
 	grid-column: 10 / 13;
 	grid-row: 4;
+}
+
+.bento-9 > div {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+.bento-9 > div > :last-child {
+	align-self: flex-end;
 }
 
 /* Random Images Styling */
