@@ -113,7 +113,7 @@ main {
 .bento-grid {
 	display: grid;
 	grid-template-columns: repeat(12, 1fr);
-	grid-template-rows: repeat(4, minmax(175px, 200px));
+	grid-template-rows: repeat(4, minmax(10.9375rem, 12.5rem)); /* 175px, 200px */
 	gap: 1rem;
 }
 
@@ -130,7 +130,7 @@ main {
 .bento-item > div {
 	background-color: #fff;
 	border-radius: 0.5rem;
-	padding: 12px;
+	padding: 0.75rem;
 	height: 100%;
 }
 
@@ -158,12 +158,12 @@ main {
 }
 
 .bento-2 p {
-	font-size: 24px;
+	font-size: 1.5rem;
 	text-align: center;
 }
 
 .bento-2 .name {
-	font-size: 48px;
+	font-size: 3rem;
 	font-family: var(--font-pacifico);
 	text-align: center;
 }
@@ -177,7 +177,7 @@ main {
 }
 
 .bento-3 .name {
-	font-size: 24px;
+	font-size: 1.5rem;
 	font-family: var(--font-pacifico);
 }
 
@@ -186,7 +186,7 @@ main {
 	grid-row: 1 / 4;
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 0.75rem;
 }
 
 .bento-4 > div {
@@ -195,19 +195,19 @@ main {
 	height: auto;
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 0.75rem;
 }
 
 .blue-heading {
 	color: #118ab2;
 	font-family: var(--font-pacifico);
-	font-size: 24px;
+	font-size: 1.5rem;
 }
 
 .countdown-timer-grid {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-	gap: 10px;
+	gap: 0.625rem;
 }
 
 .grid-item {
@@ -215,16 +215,16 @@ main {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	padding: 8px 12px;
-	gap: 8px;
+	padding: 0.5rem 0.75rem;
+	gap: 0.5rem;
 	background-color: #f5e7da;
 	border: 1px solid #000000;
-	border-radius: 8px;
+	border-radius: 0.5rem;
 }
 
 .grid-item .number {
 	font-weight: 600;
-	font-size: 24px;
+	font-size: 1.5rem;
 }
 
 .upcoming-milestones {
@@ -233,13 +233,13 @@ main {
 
 .milestone-item {
 	background-color: #989898;
-	border-radius: 8px;
+	border-radius: 0.5rem;
 	color: #fff;
 	height: 100%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	gap: 8px;
+	gap: 0.5rem;
 	flex-direction: column;
 }
 
@@ -248,7 +248,7 @@ main {
 }
 
 .milestone-date {
-	font-size: 14px;
+	font-size: 0.875rem;
 }
 
 .bento-5 {
@@ -256,7 +256,7 @@ main {
 	grid-row: 3 / 5;
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 0.75rem;
 }
 
 .bento-5 > div {
@@ -265,7 +265,7 @@ main {
 	height: auto;
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 0.75rem;
 }
 
 .recent-milestones {
@@ -294,7 +294,7 @@ main {
 }
 
 .calendar-header {
-	margin-bottom: 8px;
+	margin-bottom: 0.5rem;
 }
 
 .calendar-wrapper {
@@ -307,26 +307,26 @@ main {
 	background-color: #000;
 	color: white;
 	text-align: center;
-	padding: 2.5px 0;
-	border-radius: 4px;
-	margin-bottom: 12px;
+	padding: 0.15625rem 0;
+	border-radius: 0.25rem;
+	margin-bottom: 0.75rem;
 }
 
 .days-grid {
 	flex: 1;
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
-	gap: 8px;
+	gap: 0.5rem;
 }
 
 .day-header {
 	background-color: #000;
 	color: white;
 	text-align: center;
-	padding: 4px 2px;
-	font-size: 12px;
-	border-radius: 4px;
-	height: 24px;
+	padding: 0.25rem 0.125rem;
+	font-size: 0.75rem;
+	border-radius: 0.25rem;
+	height: 1.5rem;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -335,9 +335,9 @@ main {
 .day-cell {
 	border: 1px solid #ddd;
 	text-align: center;
-	padding: 4px;
-	font-size: 14px;
-	border-radius: 4px;
+	padding: 0.25rem;
+	font-size: 0.875rem;
+	border-radius: 0.25rem;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -377,126 +377,6 @@ main {
 .bento-9 > div > :last-child {
 	align-self: flex-end;
 }
-
-/* Random Images Styling */
-.hero-image-wrapper {
-	width: 448px;
-	height: 393px;
-	background-color: #b3a388;
-	border-radius: 8px;
-	padding: 16px 16px;
-}
-
-.hero-image-wrapper img {
-	width: 100%;
-	object-fit: cover;
-	height: 100%;
-	border-radius: 8px;
-	display: block;
-	transition: transform 0.3s ease;
-}
-.hero-image-wrapper:hover img {
-	transform: scale(1.04);
-}
-
-/* Gallery-Column Section */
-
-.gallery-column-section {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-}
-
-.gallery-img-wrapper {
-	width: 216px;
-	height: 225px;
-	background-color: #b3a388;
-	border-radius: 8px;
-	padding: 16px 16px;
-}
-
-.gallery-img-wrapper img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	background-color: #b3a388;
-	border-radius: 8px;
-	transition: transform 0.3s ease;
-}
-
-.gallery-img-wrapper:hover img {
-	transform: scale(1.04);
-}
-
-/* Card Styling Countdown*/
-.countdown-section {
-	background-color: #fff;
-	padding: 12px 16px;
-	gap: 8px;
-	border: #000 solid 1px;
-	border-radius: 8px;
-	max-width: 300px;
-}
-
-/* Card Styling Current Age */
-.current-age-section {
-	background-color: #fff;
-	padding: 12px 16px;
-	gap: 8px;
-	border: #000 solid 1px;
-	border-radius: 8px;
-	max-width: 300px;
-}
-
-.current-age {
-	background-color: #fff;
-}
-
-/* Introductory Section */
-.introductory-text-1 {
-	background-color: #fff;
-	padding: 12px 16px;
-	width: 532px;
-	border: #000 solid 1px;
-	border-radius: 8px;
-	/* border: #000 solid 1px; */
-}
-
-/* Milestone Overview Section */
-
-.milestone-overview {
-	background-color: #fff;
-	padding: 12px 16px;
-	gap: 8px;
-	border: #000 solid 1px;
-	border-radius: 8px;
-	max-width: 300px;
-}
-
-.introductory-text-2 {
-	background-color: #fff;
-	padding: 12px 16px;
-	width: 532px;
-	border: #000 solid 1px;
-	border-radius: 8px;
-	/* border: #000 solid 1px; */
-}
-
-.pacifico {
-	font-size: 48px;
-	font-family: pacifico;
-}
-
-.pacifico-small {
-	font-size: 24px;
-}
-
-/* Text Styling */
-.header-pacfico h1 {
-	color: #118ab2;
-}
-
-/* Overlay Styling */
 
 #addmilestoneOverlay {
 	display: none;
@@ -621,6 +501,7 @@ main {
 	display: flex;
 	justify-content: flex-end;
 }
+
 .save-button {
 	display: flex;
 	justify-content: flex-end;
