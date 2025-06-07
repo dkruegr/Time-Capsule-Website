@@ -107,7 +107,8 @@ header {
 
 /* Hero Section */
 main {
-	padding: 2rem;
+	max-width: 90rem;
+	margin: 2rem auto;
 }
 
 .bento-grid {

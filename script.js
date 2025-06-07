@@ -280,7 +280,6 @@ setInterval(() => {
 		];
 		const currentMonthName = monthNames[now.getMonth()];
 
-		// Only regenerate if month has changed
 		if (monthHeader.textContent !== currentMonthName) {
 			generateCalendar();
 		}
