@@ -31,7 +31,7 @@
 		</header>
 
 		<!-- Floating Add Milestone Button -->
-		<button id="openOverlayButton" class="floating-add-button">+ Add Milestone</button>
+		<!-- <button id="openOverlayButton" class="floating-add-button">+ Add Milestone</button> -->
 
 		<!-- Hero Section -->
 		<main>
@@ -173,14 +173,12 @@
 		</main>
 
 		<!-- Add Milestone Overlay -->
-		<div id="addmilestoneOverlay" class="overlayadd">
+		<!-- <div id="addmilestoneOverlay" class="overlayadd">
 			<div class="overlay-content" id="overlayContent">
 				<div class="overlay-header">
 					Add Milestone
 					<img class="close-overlay" id="closeOverlayButton" src="Images/close.svg" />
 				</div>
-
-				<!-- Form -->
 				<div class="form-group">
 					<div class="input-group">
 						<label class="label-overlay">Title:</label>
@@ -198,10 +196,10 @@
 					<button class="save-button" id="saveButton">Save</button>
 				</div>
 			</div>
-		</div>
+		</div> -->
 
 		<!-- Edit Milestone Overlay -->
-		<div class="overlayedit" id="editMilestoneOverlay">
+		<!-- <div class="overlayedit" id="editMilestoneOverlay">
 			<div class="overlay-content">
 				<div class="overlay-header">
 					Edit Milestone
@@ -221,10 +219,10 @@
 					<button class="save-button" id="saveButton">Save</button>
 				</div>
 			</div>
-		</div>
+		</div> -->
 
 		<!-- Upload Media Overlay -->
-		<div class="overlayupload" id="uploadMediaOverlay">
+		<!-- <div class="overlayupload" id="uploadMediaOverlay">
 			<div class="overlay-content">
 				<div class="overlay-header">
 					Upload Media
@@ -240,10 +238,10 @@
 					<button class="upload-button" id="uploadButton" onclick="uploadFile()">Upload</button>
 				</div>
 			</div>
-		</div>
+		</div> -->
 
 		<!-- Delete Milestone Overlay -->
-		<div class="overlaydelete" id="deleteMilestoneOverlay">
+		<!-- <div class="overlaydelete" id="deleteMilestoneOverlay">
 			<div class="overlay-content">
 				<div class="overlay-header">
 					Delete Milestone
@@ -258,107 +256,52 @@
 					<button class="confirm-button" id="confirmButton" onclick="deleteentry()">Confirm</button>
 				</div>
 			</div>
-		</div>
+		</div> -->
+		<section class="carousel-container">
+			<button class="carousel-control left" aria-label="Previous">
+				<img src="Images/left Icon.svg" alt="Left Chevron" />
+			</button>
 
-		<!-- Carousel Section -->
-		<section class="carousel-section">
-			<div class="carousel-container">
-				<!-- Left Chevron Button -->
-				<button class="carousel-control left" aria-label="Previous">
-					<img src="images/left Icon.svg" alt="Left Chevron" />
-				</button>
-
-				<!-- Carousel Items -->
-				<div class="carousel-items">
-					<div class="carousel-card">
-						<h1 class="header-pacifico">Milestone Title 1</h1>
-						<div class="image-wrapper">
-							<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.46_12a04826.jpg" alt="Card 1" />
-							<div class="hover-icons">
-								<button class="icon-btn edit-btn" data-overlay="edit-overlay" data-target="editMilestoneOverlay">
-									<img src="images/Edit.svg" alt="Edit" />
-								</button>
-								<button class="icon-btn upload-btn" data-overlay="upload-overlay" data-target="uploadMediaOverlay">
-									<img src="images/Upload.svg" alt="Upload" />
-								</button>
-								<button class="icon-btn delete-btn">
-									<img src="images/Trash.svg" alt="Delete" />
-								</button>
-							</div>
-						</div>
-						<p class="card-date">04/11/2024</p>
+			<div class="carousel-items">
+				<div class="carousel-card">
+					<div class="blue-heading">Milestone Title 1</div>
+					<div class="image-wrapper">
+						<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.46_12a04826.jpg" alt="Card 1" />
 					</div>
-					<div class="carousel-card">
-						<h1 class="header-pacifico">Milestone Title 1</h1>
-						<div class="image-wrapper">
-							<img src="images/card2.jpg" alt="Card 2" />
-							<div class="hover-icons">
-								<button class="icon-btn edit-btn" data-overlay="edit-overlay" data-target="editMilestoneOverlay">
-									<img src="images/Edit.svg" alt="Edit" />
-								</button>
-								<button class="icon-btn upload-btn" data-overlay="upload-overlay" data-target="uploadMediaOverlay">
-									<img src="images/Upload.svg" alt="Upload" />
-								</button>
-								<button class="icon-btn delete-btn">
-									<img src="images/Trash.svg" alt="Delete" />
-								</button>
-							</div>
-						</div>
-						<p class="card-date">04/11/2024</p>
+					<p class="card-date">04/11/2024</p>
+				</div>
+				<div class="carousel-card">
+					<div class="blue-heading">Milestone Title 2</div>
+					<div class="image-wrapper">
+						<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.46_12a04826.jpg" alt="Card 2" />
 					</div>
-
-					<div class="carousel-card">
-						<h1 class="header-pacifico">Milestone Title 1</h1>
-						<div class="image-wrapper">
-							<img src="images/card2.jpg" alt="Card 2" />
-							<div class="hover-icons">
-								<button class="icon-btn edit-btn" data-overlay="edit-overlay" data-target="editMilestoneOverlay">
-									<img src="images/Edit.svg" alt="Edit" />
-								</button>
-								<button class="icon-btn upload-btn" data-overlay="upload-overlay" data-target="uploadMediaOverlay">
-									<img src="images/Upload.svg" alt="Upload" />
-								</button>
-								<button class="icon-btn delete-btn">
-									<img src="images/Trash.svg" alt="Delete" />
-								</button>
-							</div>
-						</div>
-						<p class="card-date">04/11/2024</p>
-					</div>
-
-					<div class="carousel-card">
-						<h1 class="header-pacifico">Milestone Title 1</h1>
-						<div class="image-wrapper">
-							<img src="images/card2.jpg" alt="Card 2" />
-							<div class="hover-icons">
-								<button class="icon-btn edit-btn" data-overlay="edit-overlay" data-target="editMilestoneOverlay">
-									<img src="images/Edit.svg" alt="Edit" />
-								</button>
-								<button class="icon-btn upload-btn" data-overlay="upload-overlay" data-target="uploadMediaOverlay">
-									<img src="images/Upload.svg" alt="Upload" />
-								</button>
-								<button class="icon-btn delete-btn">
-									<img src="images/Trash.svg" alt="Delete" />
-								</button>
-							</div>
-						</div>
-						<p class="card-date">04/11/2024</p>
-					</div>
-					<!-- Add more cards as needed -->
+					<p class="card-date">04/11/2024</p>
 				</div>
 
-				<!-- Right Chevron Button -->
-				<button class="carousel-control right" aria-label="Next">
-					<img src="images/Right Icon.svg" alt="Right Chevron" />
-				</button>
+				<div class="carousel-card">
+					<div class="blue-heading">Milestone Title 3</div>
+					<div class="image-wrapper">
+						<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.46_12a04826.jpg" alt="Card 3" />
+					</div>
+					<p class="card-date">04/11/2024</p>
+				</div>
+				<div class="carousel-card">
+					<div class="blue-heading">Milestone Title 4</div>
+					<div class="image-wrapper">
+						<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.46_12a04826.jpg" alt="Card 4" />
+					</div>
+					<p class="card-date">04/11/2024</p>
+				</div>
 			</div>
+			<button class="carousel-control right" aria-label="Next">
+				<img src="Images/Right Icon.svg" alt="Right Chevron" />
+			</button>
 		</section>
 
 		<!-- La Familia -->
 		<section class="La-Familia">
-			<!-- Divider at the top -->
 			<div class="divider-top"></div>
-			<h1>La Familia</h1>
+			<div class="blue-heading">La Familia</h>
 			<div class="lafamilia-img-container">
 				<div class="image-wrapper1">
 					<h1 class="pacifico">Big Bro</h1>

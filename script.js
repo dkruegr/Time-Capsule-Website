@@ -1,6 +1,14 @@
 // Set baby's birth date
 const birthDate = new Date("2024-10-04T00:00:00"); // <-- Edit as needed
 
+updateCountdown();
+updateAge();
+setInterval(() => {
+	updateCountdown();
+	updateAge();
+	// updateMilestoneLabel();
+}, 1000);
+
 // Utility functions
 function getAge(dateOfBirth) {
 	const now = new Date();
@@ -38,20 +46,20 @@ function getNextMilestone(birthDate) {
 	return targetDate;
 }
 
-function updateMilestoneLabel() {
-	const age = getAge(birthDate);
-	const monthsSinceBirth =
-		(new Date().getFullYear() - birthDate.getFullYear()) * 12 + (new Date().getMonth() - birthDate.getMonth());
-	let label;
+// function updateMilestoneLabel() {
+// 	const age = getAge(birthDate);
+// 	const monthsSinceBirth =
+// 		(new Date().getFullYear() - birthDate.getFullYear()) * 12 + (new Date().getMonth() - birthDate.getMonth());
+// 	let label;
 
-	if (age.years < 1) {
-		label = `Countdown to ${monthsSinceBirth + 1} month${monthsSinceBirth + 1 > 1 ? "s" : ""} milestone`;
-	} else {
-		label = `Countdown to ${age.years + 1} year${age.years + 1 > 1 ? "s" : ""} birthday`;
-	}
+// 	if (age.years < 1) {
+// 		label = `Countdown to ${monthsSinceBirth + 1} month${monthsSinceBirth + 1 > 1 ? "s" : ""} milestone`;
+// 	} else {
+// 		label = `Countdown to ${age.years + 1} year${age.years + 1 > 1 ? "s" : ""} birthday`;
+// 	}
 
-	document.getElementById("milestone-label").textContent = label;
-}
+// 	document.getElementById("milestone-label").textContent = label;
+// }
 
 function updateCountdown() {
 	const targetDate = getNextMilestone(birthDate);
@@ -77,96 +85,87 @@ function updateAge() {
 	} day${age.days !== 1 ? "s" : ""}`;
 }
 
-// Run both updates
-updateCountdown();
-updateAge();
-setInterval(() => {
-	updateCountdown();
-	updateAge();
-	updateMilestoneLabel();
-}, 1000);
-
 // -------------------------------------
 // Utility: Open overlay by ID
 // -------------------------------------
-function openOverlayById(id) {
-	const overlay = document.getElementById(id);
-	if (overlay) overlay.classList.add("show");
-}
+// function openOverlayById(id) {
+// 	const overlay = document.getElementById(id);
+// 	if (overlay) overlay.classList.add("show");
+// }
 
 // -------------------------------------
 // Utility: Close overlay by ID
 // -------------------------------------
-function closeOverlayById(id) {
-	const overlay = document.getElementById(id);
-	if (overlay) overlay.classList.remove("show");
-}
+// function closeOverlayById(id) {
+// 	const overlay = document.getElementById(id);
+// 	if (overlay) overlay.classList.remove("show");
+// }
 
 // -------------------------------------
 // Utility: Close overlay on outside click
 // -------------------------------------
-function initOutsideClickClose(overlay) {
-	overlay.addEventListener("click", (e) => {
-		if (e.target === overlay) {
-			overlay.classList.remove("show");
-		}
-	});
-}
+// function initOutsideClickClose(overlay) {
+// 	overlay.addEventListener("click", (e) => {
+// 		if (e.target === overlay) {
+// 			overlay.classList.remove("show");
+// 		}
+// 	});
+// }
 
 // -------------------------------------
 // 1. Floating Add Milestone Button
 // -------------------------------------
-const addMilestoneBtn = document.querySelector(".floating-add-button");
-if (addMilestoneBtn) {
-	addMilestoneBtn.addEventListener("click", () => {
-		openOverlayById("addmilestoneOverlay");
-	});
-}
+// const addMilestoneBtn = document.querySelector(".floating-add-button");
+// if (addMilestoneBtn) {
+// 	addMilestoneBtn.addEventListener("click", () => {
+// 		openOverlayById("addmilestoneOverlay");
+// 	});
+// }
 
 // -------------------------------------
 // 2. General Overlay Triggers via data-target
 // (for edit + upload)
 // -------------------------------------
-const overlayTriggers = document.querySelectorAll("[data-target]");
-overlayTriggers.forEach((trigger) => {
-	trigger.addEventListener("click", () => {
-		const targetId = trigger.getAttribute("data-target");
-		openOverlayById(targetId);
-	});
-});
+// const overlayTriggers = document.querySelectorAll("[data-target]");
+// overlayTriggers.forEach((trigger) => {
+// 	trigger.addEventListener("click", () => {
+// 		const targetId = trigger.getAttribute("data-target");
+// 		openOverlayById(targetId);
+// 	});
+// });
 
 // -------------------------------------
 // 3. Close overlays when X icon is clicked
 // -------------------------------------
-document
-	.querySelectorAll(
-		".overlayadd .overlay-header img, .overlayedit .overlay-header img, .overlayupload .overlay-header img"
-	)
-	.forEach((closeBtn) => {
-		closeBtn.addEventListener("click", () => {
-			const overlay = closeBtn.closest(".overlayadd, .overlayedit, .overlayupload");
-			if (overlay) overlay.classList.remove("show");
-		});
-	});
+// document
+// 	.querySelectorAll(
+// 		".overlayadd .overlay-header img, .overlayedit .overlay-header img, .overlayupload .overlay-header img"
+// 	)
+// 	.forEach((closeBtn) => {
+// 		closeBtn.addEventListener("click", () => {
+// 			const overlay = closeBtn.closest(".overlayadd, .overlayedit, .overlayupload");
+// 			if (overlay) overlay.classList.remove("show");
+// 		});
+// 	});
 
 // -------------------------------------
 // 4. Close overlays when Save button is clicked
 // -------------------------------------
-document
-	.querySelectorAll(".overlayadd .save-button, .overlayedit .save-button, .overlayupload .upload-button")
-	.forEach((saveBtn) => {
-		saveBtn.addEventListener("click", () => {
-			const overlay = saveBtn.closest(".overlayadd, .overlayedit, .overlayupload");
-			if (overlay) overlay.classList.remove("show");
-		});
-	});
+// document
+// 	.querySelectorAll(".overlayadd .save-button, .overlayedit .save-button, .overlayupload .upload-button")
+// 	.forEach((saveBtn) => {
+// 		saveBtn.addEventListener("click", () => {
+// 			const overlay = saveBtn.closest(".overlayadd, .overlayedit, .overlayupload");
+// 			if (overlay) overlay.classList.remove("show");
+// 		});
+// 	});
 
-// -------------------------------------
-// 5. Close overlays when clicking outside
-// -------------------------------------
-document.querySelectorAll(".overlayadd, .overlayedit, .overlayupload").forEach((overlay) => {
-	initOutsideClickClose(overlay);
-});
+// // -------------------------------------
+// // 5. Close overlays when clicking outside
+// // -------------------------------------
+// document.querySelectorAll(".overlayadd, .overlayedit, .overlayupload").forEach((overlay) => {
+// 	initOutsideClickClose(overlay);
+// });
 
 // -------------------------------------
 // Calendar Functionality
@@ -257,7 +256,35 @@ function generateCalendar() {
 
 document.addEventListener("DOMContentLoaded", function () {
 	generateCalendar();
+	initializeCarousel();
 });
+
+// -------------------------------------
+// Carousel Functionality
+// -------------------------------------
+function initializeCarousel() {
+	const carouselItems = document.querySelector(".carousel-items");
+	const leftButton = document.querySelector(".carousel-control.left");
+	const rightButton = document.querySelector(".carousel-control.right");
+
+	if (!carouselItems || !leftButton || !rightButton) return;
+
+	const cardWidth = 392; // 360px image width + 32px padding
+
+	leftButton.addEventListener("click", () => {
+		carouselItems.scrollBy({
+			left: -cardWidth,
+			behavior: "smooth",
+		});
+	});
+
+	rightButton.addEventListener("click", () => {
+		carouselItems.scrollBy({
+			left: cardWidth,
+			behavior: "smooth",
+		});
+	});
+}
 
 // Update calendar monthly
 setInterval(() => {
