@@ -312,3 +312,62 @@ setInterval(() => {
 		}
 	}
 }, 60000);
+
+// Authentication Modal Functionality
+const authModal = document.getElementById("authModal");
+const headerCta = document.querySelector(".header-cta");
+const closeModal = document.getElementById("closeModal");
+const authForm = document.getElementById("authForm");
+
+// Open modal when header CTA is clicked
+headerCta.addEventListener("click", () => {
+	authModal.classList.add("active");
+	document.body.style.overflow = "hidden"; // Prevent scrolling when modal is open
+});
+
+// Close modal when X button is clicked
+closeModal.addEventListener("click", () => {
+	authModal.classList.remove("active");
+	document.body.style.overflow = "auto"; // Restore scrolling
+});
+
+// Close modal when clicking on overlay (outside the modal container)
+authModal.addEventListener("click", (e) => {
+	if (e.target === authModal) {
+		authModal.classList.remove("active");
+		document.body.style.overflow = "auto";
+	}
+});
+
+// Handle form submission
+authForm.addEventListener("submit", (e) => {
+	e.preventDefault();
+
+	const username = document.getElementById("username").value;
+	const password = document.getElementById("password").value;
+
+	// Basic validation (you can expand this as needed)
+	if (username && password) {
+		// Simulate authentication success
+		alert("Authentication successful! Editorial rights granted.");
+		authModal.classList.remove("active");
+		document.body.style.overflow = "auto";
+
+		// Reset form
+		authForm.reset();
+
+		// You can add actual authentication logic here
+		console.log("Username:", username);
+		console.log("Password:", password);
+	} else {
+		alert("Please enter both username and password.");
+	}
+});
+
+// Close modal with Escape key
+document.addEventListener("keydown", (e) => {
+	if (e.key === "Escape" && authModal.classList.contains("active")) {
+		authModal.classList.remove("active");
+		document.body.style.overflow = "auto";
+	}
+});

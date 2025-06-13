@@ -30,6 +30,29 @@
 			</div>
 		</header>
 
+		<div id="authModal" class="modal-overlay">
+			<div class="modal-container">
+				<button class="modal-close" id="closeModal">&times;</button>
+				<div class="modal-content">
+					<h2 class="modal-title">Login/Authorization</h2>
+					<p class="modal-subtitle">Enter username and password to gain editorial rights</p>
+					<form class="auth-form" id="authForm">
+						<div class="form-group">
+							<label for="username">Username</label>
+							<input type="text" id="username" name="username" required />
+						</div>
+
+						<div class="form-group">
+							<label for="password">Password</label>
+							<input type="password" id="password" name="password" required />
+						</div>
+
+						<button type="submit" class="grant-access-btn">Grant Access</button>
+					</form>
+				</div>
+			</div>
+		</div>
+
 		<!-- Floating Add Milestone Button -->
 		<!-- <button id="openOverlayButton" class="floating-add-button">+ Add Milestone</button> -->
 
