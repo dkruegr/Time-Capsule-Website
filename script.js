@@ -69,10 +69,6 @@ function updateAge() {
 	} day${age.days !== 1 ? "s" : ""}`;
 }
 
-// -------------------------------------
-// Calendar Functionality
-// -------------------------------------
-
 function generateCalendar() {
 	const now = new Date();
 	const currentYear = now.getFullYear();
@@ -159,11 +155,10 @@ function generateCalendar() {
 document.addEventListener("DOMContentLoaded", function () {
 	generateCalendar();
 	initializeCarousel();
+	initializeNavigation();
+	initializeMilestoneActions();
 });
 
-// -------------------------------------
-// Carousel Functionality
-// -------------------------------------
 function initializeCarousel() {
 	const carouselItems = document.querySelector(".carousel-items");
 	const leftButton = document.querySelector(".carousel-control.left");
@@ -215,22 +210,54 @@ setInterval(() => {
 	}
 }, 60000);
 
-// Authentication Modal Functionality
+function showPage(pageId) {
+	const pages = document.querySelectorAll(".page");
+	pages.forEach((page) => page.classList.remove("active"));
+
+	const targetPage = document.getElementById(pageId);
+	if (targetPage) {
+		targetPage.classList.add("active");
+	}
+}
+
+function initializeNavigation() {
+	const headerCta = document.querySelector(".header-cta");
+
+	if (headerCta) {
+		headerCta.addEventListener("click", () => {
+			const currentPage = document.querySelector(".page.active");
+
+			if (currentPage && currentPage.id === "home-page") {
+				authModal.classList.add("active");
+				document.body.style.overflow = "hidden";
+			} else {
+				showPage("home-page");
+				updateHeaderCTA("explore");
+			}
+		});
+	}
+
+	initializeMilestoneActions();
+}
+
+function updateHeaderCTA(mode) {
+	const headerCta = document.querySelector(".header-cta");
+	const ctaText = headerCta.querySelector(".desktop");
+
+	if (mode === "explore") {
+		ctaText.innerHTML = "Explore Every Milestone";
+	} else if (mode === "home") {
+		ctaText.innerHTML = "← Back to Home";
+	}
+}
+
 const authModal = document.getElementById("authModal");
-const headerCta = document.querySelector(".header-cta");
 const closeModal = document.getElementById("closeModal");
 const authForm = document.getElementById("authForm");
 
-// Open modal when header CTA is clicked
-headerCta.addEventListener("click", () => {
-	authModal.classList.add("active");
-	document.body.style.overflow = "hidden"; // Prevent scrolling when modal is open
-});
-
-// Close modal when X button is clicked
 closeModal.addEventListener("click", () => {
 	authModal.classList.remove("active");
-	document.body.style.overflow = "auto"; // Restore scrolling
+	document.body.style.overflow = "auto";
 });
 
 // Close modal when clicking on overlay (outside the modal container)
@@ -248,19 +275,16 @@ authForm.addEventListener("submit", (e) => {
 	const username = document.getElementById("username").value;
 	const password = document.getElementById("password").value;
 
-	// Basic validation (you can expand this as needed)
 	if (username && password) {
-		// Simulate authentication success
-		alert("Authentication successful! Editorial rights granted.");
+		// Close modal
 		authModal.classList.remove("active");
 		document.body.style.overflow = "auto";
 
+		showPage("milestones-page");
+		updateHeaderCTA("home");
+
 		// Reset form
 		authForm.reset();
-
-		// You can add actual authentication logic here
-		console.log("Username:", username);
-		console.log("Password:", password);
 	} else {
 		alert("Please enter both username and password.");
 	}
@@ -273,3 +297,50 @@ document.addEventListener("keydown", (e) => {
 		document.body.style.overflow = "auto";
 	}
 });
+
+// milestone actions
+// function initializeMilestoneActions() {
+// 	// Add milestone button
+// 	const addMilestoneBtn = document.querySelector(".add-milestone-btn");
+// 	if (addMilestoneBtn) {
+// 		addMilestoneBtn.addEventListener("click", () => {
+// 			alert("Add Milestone functionality - Coming Soon!");
+// 		});
+// 	}
+
+// 	// Edit buttons
+// 	const editButtons = document.querySelectorAll(".edit-btn");
+// 	editButtons.forEach((btn) => {
+// 		btn.addEventListener("click", (e) => {
+// 			e.stopPropagation();
+// 			alert("Edit functionality - Coming Soon!");
+// 		});
+// 	});
+
+// 	// Share buttons
+// 	const shareButtons = document.querySelectorAll(".share-btn");
+// 	shareButtons.forEach((btn) => {
+// 		btn.addEventListener("click", (e) => {
+// 			e.stopPropagation();
+// 			alert("Share functionality - Coming Soon!");
+// 		});
+// 	});
+
+// 	// Delete buttons
+// 	const deleteButtons = document.querySelectorAll(".delete-btn");
+// 	deleteButtons.forEach((btn) => {
+// 		btn.addEventListener("click", (e) => {
+// 			e.stopPropagation();
+// 			if (confirm("Are you sure you want to delete this milestone?")) {
+// 				const card = btn.closest(".milestone-card");
+// 				if (card) {
+// 					card.style.opacity = "0";
+// 					card.style.transform = "scale(0.8)";
+// 					setTimeout(() => {
+// 						card.remove();
+// 					}, 300);
+// 				}
+// 			}
+// 		});
+// 	});
+// }

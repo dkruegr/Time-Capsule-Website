@@ -730,6 +730,14 @@ section {
 	text-decoration: underline; /* Add underline on hover */
 }
 
+.page {
+	display: none;
+}
+
+.page.active {
+	display: block;
+}
+
 /* Breakpoints are desktop first */
 /* you can change the tablet breakpoint if you want */
 @media (max-width: 1024px) {

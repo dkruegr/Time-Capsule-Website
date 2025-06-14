@@ -16,7 +16,6 @@
 		<header>
 			<div class="header-content">
 				<div class="header-left">
-					<!-- don't select just desktop in CSS because it could be used in multiple places -->
 					<div class="desktop">
 						<span>You were born</span>
 						<span class="header-date">October 4th, 2024</span>
@@ -30,271 +29,357 @@
 			</div>
 		</header>
 
-		<div id="authModal" class="modal-overlay">
-			<div class="modal-container">
-				<button class="modal-close" id="closeModal">&times;</button>
-				<div class="modal-content">
-					<h2 class="modal-title">Login/Authorization</h2>
-					<p class="modal-subtitle">Enter username and password to gain editorial rights</p>
-					<form class="auth-form" id="authForm">
-						<div class="form-group">
-							<label for="username">Username</label>
-							<input type="text" id="username" name="username" required />
-						</div>
+		<!-- Main App Container -->
+		<div id="app">
+			<!-- Home Page -->
+			<div id="home-page" class="page active">
+				<div id="authModal" class="modal-overlay">
+					<div class="modal-container">
+						<button class="modal-close" id="closeModal">&times;</button>
+						<div class="modal-content">
+							<h2 class="modal-title">Login/Authorization</h2>
+							<p class="modal-subtitle">Enter username and password to gain editorial rights</p>
+							<form class="auth-form" id="authForm">
+								<div class="form-group">
+									<label for="username">Username</label>
+									<input type="text" id="username" name="username" required />
+								</div>
 
-						<div class="form-group">
-							<label for="password">Password</label>
-							<input type="password" id="password" name="password" required />
-						</div>
+								<div class="form-group">
+									<label for="password">Password</label>
+									<input type="password" id="password" name="password" required />
+								</div>
 
-						<button type="submit" class="grant-access-btn">Grant Access</button>
-					</form>
-				</div>
-			</div>
-		</div>
-
-		<!-- Floating Add Milestone Button -->
-		<!-- <button id="openOverlayButton" class="floating-add-button">+ Add Milestone</button> -->
-
-		<!-- Hero Section -->
-		<main>
-			<div class="bento-grid">
-				<div class="bento-item bento-1 bento-photo">
-					<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.46_12a04826.jpg" />
-				</div>
-				<div class="bento-item bento-2">
-					<div>
-						<p>Re-live Years of Love and Joy with</p>
-						<div class="name">Elizabeth</div>
-					</div>
-				</div>
-				<div class="bento-item bento-3">
-					<div>
-						Welcome to a special space created to celebrate <span class="name">Elizabeth</span> and her incredible
-						journey through the first year of life & onwards. From her first smile to her tiniest milestones, every
-						moment has been a treasure.
-					</div>
-				</div>
-				<div class="bento-item bento-4">
-					<div>
-						<div class="blue-heading">Baby's Current Age</div>
-						<div id="baby-age">0 years and 87 days</div>
-					</div>
-					<div>
-						<div class="blue-heading">Countdown to Next Birthday</div>
-						<div class="countdown-timer-grid">
-							<div class="grid-item"><span class="number" id="days">00</span><span>DAYS</span></div>
-							<div class="grid-item"><span class="number" id="hours">00</span><span>HOURS</span></div>
-							<div class="grid-item"><span class="number" id="minutes">00</span><span>MINUTES</span></div>
-							<div class="grid-item"><span class="number" id="seconds">00</span><span>SECONDS</span></div>
-						</div>
-					</div>
-					<div class="upcoming-milestones">
-						<div class="blue-heading">Upcoming Milestones</div>
-						<div class="milestone-item">
-							<p class="milestone-title">Baby's first steps</p>
-							<p class="milestone-date">June 1, 2025</p>
+								<button type="submit" class="grant-access-btn">Grant Access</button>
+							</form>
 						</div>
 					</div>
 				</div>
-				<div class="bento-item bento-5">
-					<div class="recent-milestones">
-						<div class="blue-heading">Recent Milestones</div>
-						<div class="milestone-item">
-							<p class="milestone-title">Baby's First Month on Earth</p>
-							<p class="milestone-date">November 4, 2024</p>
+
+				<!-- Hero Section -->
+				<main>
+					<div class="bento-grid">
+						<div class="bento-item bento-1 bento-photo">
+							<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.46_12a04826.jpg" />
 						</div>
-					</div>
-					<div>
-						<div class="blue-heading">Milestone Overview</div>
-						<div>
-							<p class="overview-stat">Total Milestones: 6</p>
-							<p class="overview-stat">Next Milestone: Baby's first smile</p>
+						<div class="bento-item bento-2">
+							<div>
+								<p>Re-live Years of Love and Joy with</p>
+								<div class="name">Elizabeth</div>
+							</div>
 						</div>
-					</div>
-				</div>
-				<div class="bento-item bento-6 bento-photo">
-					<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.44_869d6b8d.jpg" />
-				</div>
-				<div class="bento-item bento-7 bento-photo">
-					<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.45_e864e877.jpg" />
-				</div>
-				<div class="bento-item bento-8">
-					<div class="calendar-container">
-						<div class="calendar-header">
-							<div class="blue-heading">CALENDAR</div>
+						<div class="bento-item bento-3">
+							<div>
+								Welcome to a special space created to celebrate <span class="name">Elizabeth</span> and her incredible
+								journey through the first year of life & onwards. From her first smile to her tiniest milestones, every
+								moment has been a treasure.
+							</div>
 						</div>
-						<div class="calendar-wrapper">
-							<div class="calendar-month-header" id="calendar-month-header">Loading...</div>
-							<div class="days-grid" id="calendar-days-grid">
-								<div class="day-header">Su</div>
-								<div class="day-header">Mo</div>
-								<div class="day-header">Tu</div>
-								<div class="day-header">We</div>
-								<div class="day-header">Th</div>
-								<div class="day-header">Fr</div>
-								<div class="day-header">Sa</div>
-								<div class="day-cell inv-month">30</div>
-								<div class="day-cell inv-month">31</div>
-								<div class="day-cell">1</div>
-								<div class="day-cell">2</div>
-								<div class="day-cell">3</div>
-								<div class="day-cell">4</div>
-								<div class="day-cell colored">5</div>
+						<div class="bento-item bento-4">
+							<div>
+								<div class="blue-heading">Baby's Current Age</div>
+								<div id="baby-age">0 years and 87 days</div>
+							</div>
+							<div>
+								<div class="blue-heading">Countdown to Next Birthday</div>
+								<div class="countdown-timer-grid">
+									<div class="grid-item"><span class="number" id="days">00</span><span>DAYS</span></div>
+									<div class="grid-item"><span class="number" id="hours">00</span><span>HOURS</span></div>
+									<div class="grid-item"><span class="number" id="minutes">00</span><span>MINUTES</span></div>
+									<div class="grid-item"><span class="number" id="seconds">00</span><span>SECONDS</span></div>
+								</div>
+							</div>
+							<div class="upcoming-milestones">
+								<div class="blue-heading">Upcoming Milestones</div>
+								<div class="milestone-item">
+									<p class="milestone-title">Baby's first steps</p>
+									<p class="milestone-date">June 1, 2025</p>
+								</div>
+							</div>
+						</div>
+						<div class="bento-item bento-5">
+							<div class="recent-milestones">
+								<div class="blue-heading">Recent Milestones</div>
+								<div class="milestone-item">
+									<p class="milestone-title">Baby's First Month on Earth</p>
+									<p class="milestone-date">November 4, 2024</p>
+								</div>
+							</div>
+							<div>
+								<div class="blue-heading">Milestone Overview</div>
+								<div>
+									<p class="overview-stat">Total Milestones: 6</p>
+									<p class="overview-stat">Next Milestone: Baby's first smile</p>
+								</div>
+							</div>
+						</div>
+						<div class="bento-item bento-6 bento-photo">
+							<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.44_869d6b8d.jpg" />
+						</div>
+						<div class="bento-item bento-7 bento-photo">
+							<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.45_e864e877.jpg" />
+						</div>
+						<div class="bento-item bento-8">
+							<div class="calendar-container">
+								<div class="calendar-header">
+									<div class="blue-heading">CALENDAR</div>
+								</div>
+								<div class="calendar-wrapper">
+									<div class="calendar-month-header" id="calendar-month-header">Loading...</div>
+									<div class="days-grid" id="calendar-days-grid">
+										<div class="day-header">Su</div>
+										<div class="day-header">Mo</div>
+										<div class="day-header">Tu</div>
+										<div class="day-header">We</div>
+										<div class="day-header">Th</div>
+										<div class="day-header">Fr</div>
+										<div class="day-header">Sa</div>
+										<div class="day-cell inv-month">30</div>
+										<div class="day-cell inv-month">31</div>
+										<div class="day-cell">1</div>
+										<div class="day-cell">2</div>
+										<div class="day-cell">3</div>
+										<div class="day-cell">4</div>
+										<div class="day-cell colored">5</div>
 
-								<div class="day-cell colored">6</div>
-								<div class="day-cell current-day">7</div>
-								<div class="day-cell">8</div>
-								<div class="day-cell">9</div>
-								<div class="day-cell">10</div>
-								<div class="day-cell">11</div>
-								<div class="day-cell colored">12</div>
+										<div class="day-cell colored">6</div>
+										<div class="day-cell current-day">7</div>
+										<div class="day-cell">8</div>
+										<div class="day-cell">9</div>
+										<div class="day-cell">10</div>
+										<div class="day-cell">11</div>
+										<div class="day-cell colored">12</div>
 
-								<div class="day-cell colored">13</div>
-								<div class="day-cell">14</div>
-								<div class="day-cell">15</div>
-								<div class="day-cell">16</div>
-								<div class="day-cell">17</div>
-								<div class="day-cell">18</div>
-								<div class="day-cell colored">19</div>
+										<div class="day-cell colored">13</div>
+										<div class="day-cell">14</div>
+										<div class="day-cell">15</div>
+										<div class="day-cell">16</div>
+										<div class="day-cell">17</div>
+										<div class="day-cell">18</div>
+										<div class="day-cell colored">19</div>
 
-								<div class="day-cell colored">20</div>
-								<div class="day-cell">21</div>
-								<div class="day-cell">22</div>
-								<div class="day-cell">23</div>
-								<div class="day-cell">24</div>
-								<div class="day-cell">25</div>
-								<div class="day-cell colored">26</div>
+										<div class="day-cell colored">20</div>
+										<div class="day-cell">21</div>
+										<div class="day-cell">22</div>
+										<div class="day-cell">23</div>
+										<div class="day-cell">24</div>
+										<div class="day-cell">25</div>
+										<div class="day-cell colored">26</div>
 
-								<div class="day-cell colored">27</div>
-								<div class="day-cell">28</div>
-								<div class="day-cell">29</div>
-								<div class="day-cell">30</div>
-								<div class="day-cell inv-month">1</div>
-								<div class="day-cell inv-month">2</div>
-								<div class="day-cell inv-month">3</div>
+										<div class="day-cell colored">27</div>
+										<div class="day-cell">28</div>
+										<div class="day-cell">29</div>
+										<div class="day-cell">30</div>
+										<div class="day-cell inv-month">1</div>
+										<div class="day-cell inv-month">2</div>
+										<div class="day-cell inv-month">3</div>
 
-								<div class="day-cell inv-month">4</div>
-								<div class="day-cell inv-month">5</div>
-								<div class="day-cell inv-month">6</div>
-								<div class="day-cell inv-month">7</div>
-								<div class="day-cell inv-month">8</div>
-								<div class="day-cell inv-month">9</div>
-								<div class="day-cell inv-month">10</div>
+										<div class="day-cell inv-month">4</div>
+										<div class="day-cell inv-month">5</div>
+										<div class="day-cell inv-month">6</div>
+										<div class="day-cell inv-month">7</div>
+										<div class="day-cell inv-month">8</div>
+										<div class="day-cell inv-month">9</div>
+										<div class="day-cell inv-month">10</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="bento-item bento-9">
+							<div>
+								<div class="blue-heading">Fun Family Quotes</div>
+								<div>Mummy do you know that cows drink milk</div>
+								<div>~Abigail</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="bento-item bento-9">
-					<div>
-						<div class="blue-heading">Fun Family Quotes</div>
-						<div>Mummy do you know that cows drink milk</div>
-						<div>~Abigail</div>
-					</div>
-				</div>
-			</div>
-		</main>
-		<section class="carousel-container">
-			<button class="carousel-control left" aria-label="Previous">
-				<img src="Images/left Icon.svg" alt="Left Chevron" />
-			</button>
+				</main>
+				<section class="carousel-container">
+					<button class="carousel-control left" aria-label="Previous">
+						<img src="Images/left Icon.svg" alt="Left Chevron" />
+					</button>
 
-			<div class="carousel-items">
-				<div class="carousel-card">
-					<div class="blue-heading">Milestone Title 1</div>
-					<div class="image-wrapper">
-						<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.46_12a04826.jpg" alt="Card 1" />
-					</div>
-					<p class="card-date">04/11/2024</p>
-				</div>
-				<div class="carousel-card">
-					<div class="blue-heading">Milestone Title 2</div>
-					<div class="image-wrapper">
-						<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.46_12a04826.jpg" alt="Card 2" />
-					</div>
-					<p class="card-date">04/11/2024</p>
-				</div>
+					<div class="carousel-items">
+						<div class="carousel-card">
+							<div class="blue-heading">Milestone Title 1</div>
+							<div class="image-wrapper">
+								<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.46_12a04826.jpg" alt="Card 1" />
+							</div>
+							<p class="card-date">04/11/2024</p>
+						</div>
+						<div class="carousel-card">
+							<div class="blue-heading">Milestone Title 2</div>
+							<div class="image-wrapper">
+								<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.46_12a04826.jpg" alt="Card 2" />
+							</div>
+							<p class="card-date">04/11/2024</p>
+						</div>
 
-				<div class="carousel-card">
-					<div class="blue-heading">Milestone Title 3</div>
-					<div class="image-wrapper">
-						<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.46_12a04826.jpg" alt="Card 3" />
+						<div class="carousel-card">
+							<div class="blue-heading">Milestone Title 3</div>
+							<div class="image-wrapper">
+								<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.46_12a04826.jpg" alt="Card 3" />
+							</div>
+							<p class="card-date">04/11/2024</p>
+						</div>
+						<div class="carousel-card">
+							<div class="blue-heading">Milestone Title 4</div>
+							<div class="image-wrapper">
+								<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.46_12a04826.jpg" alt="Card 4" />
+							</div>
+							<p class="card-date">04/11/2024</p>
+						</div>
 					</div>
-					<p class="card-date">04/11/2024</p>
-				</div>
-				<div class="carousel-card">
-					<div class="blue-heading">Milestone Title 4</div>
-					<div class="image-wrapper">
-						<img src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.46_12a04826.jpg" alt="Card 4" />
+					<button class="carousel-control right" aria-label="Next">
+						<img src="Images/Right Icon.svg" alt="Right Chevron" />
+					</button>
+				</section>
+
+				<!-- La Familia -->
+				<section class="La-Familia">
+					<div class="divider-top"></div>
+					<div class="blue-heading">La Familia</div>
+					<div class="lafamilia-img-container">
+						<div class="image-wrapper1">
+							<h1 class="pacifico">Big Bro</h1>
+							<div class="overlay-dark"></div>
+							<img src="Images/Baby Elizabeth/big-brother-holding-his-little-600nw-1207449184.webp" />
+						</div>
+
+						<div class="image-wrapper2">
+							<h1 class="pacifico">Sissy</h1>
+							<div class="overlay-dark"></div>
+							<img
+								src="Images/Baby Elizabeth/depositphotos_316863864-stock-photo-cheerful-african-american-sisters-taking.jpg"
+							/>
+						</div>
+						<div class="image-wrapper3">
+							<h1 class="pacifico">Family Photo</h1>
+							<div class="overlay-dark"></div>
+							<img src="Images/DK2-03.png" />
+						</div>
+						<div class="image-wrapper4">
+							<h1 class="pacifico">Mama</h1>
+							<div class="overlay-dark"></div>
+							<img src="Images/Baby Elizabeth/black-mom-playing-bed-her-600nw-1940935138.webp" />
+						</div>
+						<div class="image-wrapper5">
+							<h1 class="pacifico">Papa</h1>
+							<div class="overlay-dark"></div>
+							<img src="Images/DK CARDS.jpg" />
+						</div>
 					</div>
-					<p class="card-date">04/11/2024</p>
-				</div>
+					<div class="divider-bottom"></div>
+				</section>
+				<!-- Footer -->
+				<footer class="footer">
+					<div class="footer-item">
+						<p>&copy; 2024 DKreative Studio. All Rights Reserved.</p>
+					</div>
+					<div class="footer-item">
+						<a href="https://dribbble.com/james_adejola" target="_blank" class="social-link">
+							<img class="social-icon" src="Images/hugeicons_dribbble.svg" alt="Dribbble" />
+						</a>
+						<a href="https://www.instagram.com/dkruegr/" target="_blank" class="social-link">
+							<img class="social-icon" src="Images/iconoir_instagram.svg" alt="Instagram" />
+						</a>
+						<a href="https://x.com/dkruegr" target="_blank" class="social-link">
+							<img class="social-icon" src="Images/pajamas_twitter.svg" alt="Twitter" />
+						</a>
+						<a href="https://www.behance.net/jamesadejola" target="_blank" class="social-link">
+							<img class="social-icon" src="Images/ri_behance-line.svg" alt="Behance" />
+						</a>
+					</div>
+					<div class="footer-item">
+						<p>Designed by dkruegr</p>
+					</div>
+				</footer>
 			</div>
-			<button class="carousel-control right" aria-label="Next">
-				<img src="Images/Right Icon.svg" alt="Right Chevron" />
-			</button>
-		</section>
+			<!-- Milestones Page -->
+			<div id="milestones-page" class="page">
+				<main class="milestones-content">
+					<div class="milestones-container">
+						<div class="milestone-card">
+							<div class="milestone-image">
+								<img
+									src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.46_12a04826.jpg"
+									alt="Baby's First Month"
+								/>
+								<div class="milestone-actions">
+									<button class="action-btn edit-btn" title="Edit">
+										<img src="Images/Edit.svg" alt="Edit" />
+									</button>
+									<button class="action-btn share-btn" title="Share">
+										<img src="Images/Upload.svg" alt="Share" />
+									</button>
+									<button class="action-btn delete-btn" title="Delete">
+										<img src="Images/Trash.svg" alt="Delete" />
+									</button>
+								</div>
+							</div>
+							<div class="milestone-info">
+								<h3 class="milestone-title">Baby's First Month on Earth</h3>
+								<p class="milestone-date">04/11/2024</p>
+							</div>
+						</div>
 
-		<!-- La Familia -->
-		<section class="La-Familia">
-			<div class="divider-top"></div>
-			<div class="blue-heading">La Familia</div>
-			<div class="lafamilia-img-container">
-				<div class="image-wrapper1">
-					<h1 class="pacifico">Big Bro</h1>
-					<div class="overlay-dark"></div>
-					<img src="Images/Baby Elizabeth/big-brother-holding-his-little-600nw-1207449184.webp" />
-				</div>
+						<div class="milestone-card">
+							<div class="milestone-image">
+								<img
+									src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.44_869d6b8d.jpg"
+									alt="Baby's First Month"
+								/>
+								<div class="milestone-actions">
+									<button class="action-btn edit-btn" title="Edit">
+										<img src="Images/Edit.svg" alt="Edit" />
+									</button>
+									<button class="action-btn share-btn" title="Share">
+										<img src="Images/Upload.svg" alt="Share" />
+									</button>
+									<button class="action-btn delete-btn" title="Delete">
+										<img src="Images/Trash.svg" alt="Delete" />
+									</button>
+								</div>
+							</div>
+							<div class="milestone-info">
+								<h3 class="milestone-title">Baby's First Month on Earth</h3>
+								<p class="milestone-date">04/11/2024</p>
+							</div>
+						</div>
 
-				<div class="image-wrapper2">
-					<h1 class="pacifico">Sissy</h1>
-					<div class="overlay-dark"></div>
-					<img
-						src="Images/Baby Elizabeth/depositphotos_316863864-stock-photo-cheerful-african-american-sisters-taking.jpg"
-					/>
-				</div>
-				<div class="image-wrapper3">
-					<h1 class="pacifico">Family Photo</h1>
-					<div class="overlay-dark"></div>
-					<img src="Images/DK2-03.png" />
-				</div>
-				<div class="image-wrapper4">
-					<h1 class="pacifico">Mama</h1>
-					<div class="overlay-dark"></div>
-					<img src="Images/Baby Elizabeth/black-mom-playing-bed-her-600nw-1940935138.webp" />
-				</div>
-				<div class="image-wrapper5">
-					<h1 class="pacifico">Papa</h1>
-					<div class="overlay-dark"></div>
-					<img src="Images/DK CARDS.jpg" />
-				</div>
-			</div>
-			<div class="divider-bottom"></div>
-		</section>
+						<div class="milestone-card">
+							<div class="milestone-image">
+								<img
+									src="Images/Baby Elizabeth/WhatsApp Image 2024-11-16 at 17.02.45_e864e877.jpg"
+									alt="Baby's First Month"
+								/>
+								<div class="milestone-actions">
+									<button class="action-btn edit-btn" title="Edit">
+										<img src="Images/Edit.svg" alt="Edit" />
+									</button>
+									<button class="action-btn share-btn" title="Share">
+										<img src="Images/Upload.svg" alt="Share" />
+									</button>
+									<button class="action-btn delete-btn" title="Delete">
+										<img src="Images/Trash.svg" alt="Delete" />
+									</button>
+								</div>
+							</div>
+							<div class="milestone-info">
+								<h3 class="milestone-title">Baby's First Month on Earth</h3>
+								<p class="milestone-date">04/11/2024</p>
+							</div>
+						</div>
 
-		<!-- Footer -->
-		<footer class="footer">
-			<div class="footer-item">
-				<p>&copy; 2024 DKreative Studio. All Rights Reserved.</p>
+						<div class="add-milestone-card">
+							<button class="add-milestone-btn">
+								<span class="add-text">Add Milestone +</span>
+							</button>
+						</div>
+					</div>
+				</main>
 			</div>
-			<div class="footer-item">
-				<a href="https://dribbble.com/james_adejola" target="_blank" class="social-link">
-					<img class="social-icon" src="Images/hugeicons_dribbble.svg" alt="Dribbble" />
-				</a>
-				<a href="https://www.instagram.com/dkruegr/" target="_blank" class="social-link">
-					<img class="social-icon" src="Images/iconoir_instagram.svg" alt="Instagram" />
-				</a>
-				<a href="https://x.com/dkruegr" target="_blank" class="social-link">
-					<img class="social-icon" src="Images/pajamas_twitter.svg" alt="Twitter" />
-				</a>
-				<a href="https://www.behance.net/jamesadejola" target="_blank" class="social-link">
-					<img class="social-icon" src="Images/ri_behance-line.svg" alt="Behance" />
-				</a>
-			</div>
-			<div class="footer-item">
-				<p>Designed by dkruegr</p>
-			</div>
-		</footer>
+		</div>
 
 		<script src="script.js"></script>
 	</body>
