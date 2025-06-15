@@ -18,6 +18,13 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
+
+// Configure Firestore settings
+db.settings({
+	timestampsInSnapshots: true,
+});
 
 updateCountdown();
 updateAge();
@@ -173,13 +180,13 @@ function generateCalendar() {
 document.addEventListener("DOMContentLoaded", function () {
 	generateCalendar();
 	initializeCarousel();
-
 	// Initialize navigation after a small delay to ensure all elements are ready
 	setTimeout(() => {
 		updateNavigation();
 	}, 100);
 
 	initializeMilestoneActions();
+	loadMilestones();
 
 	disableEditMode();
 });
@@ -414,13 +421,11 @@ function initializeMilestoneActions() {
 	// Update file status when files are selected
 	if (fileInput && fileStatus) {
 		fileInput.addEventListener("change", (e) => {
-			const files = e.target.files;
-			if (files.length === 0) {
+			const file = e.target.files[0];
+			if (!file) {
 				fileStatus.textContent = "No file chosen";
-			} else if (files.length === 1) {
-				fileStatus.textContent = files[0].name;
 			} else {
-				fileStatus.textContent = `${files.length} files selected`;
+				fileStatus.textContent = file.name;
 			}
 		});
 	}
@@ -436,7 +441,7 @@ function initializeMilestoneActions() {
 			}
 
 			const title = document.getElementById("milestoneTitle").value;
-			const files = fileInput.files;
+			const file = fileInput.files[0];
 			const date = document.getElementById("milestoneDate").value;
 			const submitButton = milestoneForm.querySelector('button[type="submit"]');
 
@@ -450,8 +455,7 @@ function initializeMilestoneActions() {
 			submitButton.textContent = "Saving...";
 
 			try {
-				// Here you would typically save the milestone data to Firebase
-				console.log("New milestone:", { title, files, date, userId: currentUser.uid });
+				await addMilestone(title, date, file);
 
 				// Close modal
 				addMilestoneModal.classList.remove("active");
@@ -460,6 +464,9 @@ function initializeMilestoneActions() {
 				// Reset form
 				milestoneForm.reset();
 				fileStatus.textContent = "No file chosen";
+
+				// Reload milestones
+				await loadMilestones();
 
 				// Show success message
 				alert("Milestone added successfully!");
@@ -474,26 +481,6 @@ function initializeMilestoneActions() {
 		});
 	}
 
-	// Handle delete milestone buttons (only if authenticated)
-	const deleteButtons = document.querySelectorAll(".delete-milestone");
-	deleteButtons.forEach((button) => {
-		button.addEventListener("click", (e) => {
-			if (!currentUser) {
-				alert("Please sign in to delete milestones.");
-				return;
-			}
-
-			if (confirm("Are you sure you want to delete this milestone?")) {
-				// Here you would typically delete the milestone from Firebase
-				const milestoneCard = button.closest(".milestone-card");
-				if (milestoneCard) {
-					milestoneCard.remove();
-					console.log("Milestone deleted");
-				}
-			}
-		});
-	});
-
 	// Close milestone modal with Escape key
 	document.addEventListener("keydown", (e) => {
 		if (e.key === "Escape" && addMilestoneModal && addMilestoneModal.classList.contains("active")) {
@@ -501,6 +488,339 @@ function initializeMilestoneActions() {
 			document.body.style.overflow = "auto";
 		}
 	});
+}
+
+// Add milestone to Firestore
+async function addMilestone(title, date, file) {
+	try {
+		console.log("Adding milestone:", { title, date, file });
+
+		let imageUrl = null;
+		let imagePath = null;
+
+		// Upload image if provided
+		if (file) {
+			console.log("Uploading image...");
+			const timestamp = Date.now();
+			const fileName = `milestones/${timestamp}_${file.name}`;
+			imagePath = fileName;
+			const storageRef = storage.ref(fileName);
+
+			const snapshot = await storageRef.put(file);
+			imageUrl = await snapshot.ref.getDownloadURL();
+			console.log("Image uploaded successfully:", imageUrl);
+		}
+
+		// Add milestone document to Firestore
+		const milestoneData = {
+			title: title,
+			date: date,
+			imageUrl: imageUrl,
+			imagePath: imagePath,
+			createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+			userId: currentUser.uid,
+		};
+
+		console.log("Saving milestone data:", milestoneData);
+		await db.collection("milestones").add(milestoneData);
+		console.log("Milestone added successfully");
+	} catch (error) {
+		console.error("Error adding milestone:", error);
+		throw error;
+	}
+}
+
+// Load milestones from Firestore
+async function loadMilestones() {
+	try {
+		console.log("Loading milestones...");
+		const snapshot = await db.collection("milestones").orderBy("date", "desc").get();
+
+		const milestones = [];
+		snapshot.forEach((doc) => {
+			milestones.push({
+				id: doc.id,
+				...doc.data(),
+			});
+		});
+
+		console.log("Loaded milestones:", milestones);
+		displayMilestones(milestones);
+		updateHomePage(milestones);
+	} catch (error) {
+		console.error("Error loading milestones:", error);
+
+		// If it's a permissions error, try to load without authentication
+		if (error.code === "permission-denied") {
+			console.log("Permission denied, trying to load public milestones...");
+			try {
+				const snapshot = await db.collection("milestones").orderBy("date", "desc").get();
+
+				const milestones = [];
+				snapshot.forEach((doc) => {
+					milestones.push({
+						id: doc.id,
+						...doc.data(),
+					});
+				});
+
+				displayMilestones(milestones);
+				updateHomePage(milestones);
+			} catch (innerError) {
+				console.error("Error loading public milestones:", innerError);
+				// Show default content if loading fails
+				displayDefaultMilestones();
+			}
+		} else {
+			// Show default content if loading fails
+			displayDefaultMilestones();
+		}
+	}
+}
+
+// Display default milestones when database is unavailable
+function displayDefaultMilestones() {
+	console.log("Displaying default milestones");
+	const defaultMilestones = [
+		{
+			id: "default1",
+			title: "Baby's Birth",
+			date: birthDate.toISOString().split("T")[0],
+			imageUrl: null,
+		},
+	];
+
+	displayMilestones([]);
+	updateHomePage(defaultMilestones);
+}
+
+// Display milestones in the explore page
+function displayMilestones(milestones) {
+	const milestonesContainer = document.querySelector(".milestones-container");
+
+	// Clear existing milestone cards (keep the title)
+	const title = milestonesContainer.querySelector(".milestones-container-title");
+	milestonesContainer.innerHTML = "";
+	milestonesContainer.appendChild(title);
+
+	milestones.forEach((milestone) => {
+		const milestoneCard = createMilestoneCard(milestone);
+		milestonesContainer.appendChild(milestoneCard);
+	});
+}
+
+// Create milestone card element
+function createMilestoneCard(milestone) {
+	const card = document.createElement("div");
+	card.className = "milestone-card";
+	card.dataset.milestoneId = milestone.id;
+
+	card.innerHTML = `
+		<div class="milestone-image">
+			${milestone.imageUrl ? `<img src="${milestone.imageUrl}" alt="${milestone.title}">` : ""}
+		</div>
+		<div>
+			<div class="blue-heading">${milestone.title}</div>
+			<p>${formatDate(milestone.date)}</p>
+		</div>
+		<button class="delete-milestone" title="Delete" style="${currentUser ? "display: block" : "display: none"}">
+			<img src="images/icons/trash.svg" alt="Delete" />
+		</button>
+	`;
+
+	// Add delete functionality
+	const deleteBtn = card.querySelector(".delete-milestone");
+	deleteBtn.addEventListener("click", async () => {
+		if (!currentUser) {
+			alert("Please sign in to delete milestones.");
+			return;
+		}
+
+		if (confirm("Are you sure you want to delete this milestone?")) {
+			try {
+				await deleteMilestone(milestone.id, milestone.imagePath);
+				card.remove();
+				await loadMilestones(); // Refresh to update home page
+				console.log("Milestone deleted successfully");
+			} catch (error) {
+				console.error("Error deleting milestone:", error);
+				alert("Error deleting milestone. Please try again.");
+			}
+		}
+	});
+
+	return card;
+}
+
+// Delete milestone from Firestore and Storage
+async function deleteMilestone(milestoneId, imagePath) {
+	try {
+		console.log("Deleting milestone:", { milestoneId, imagePath });
+
+		// Delete image from Storage if it exists
+		if (imagePath) {
+			console.log("Deleting image from storage...");
+			const imageRef = storage.ref(imagePath);
+			try {
+				await imageRef.delete();
+				console.log("Image deleted successfully");
+			} catch (imageError) {
+				console.warn("Could not delete image (may not exist):", imageError);
+				// Continue with document deletion even if image deletion fails
+			}
+		}
+
+		// Delete document from Firestore
+		console.log("Deleting milestone document...");
+		await db.collection("milestones").doc(milestoneId).delete();
+		console.log("Milestone deleted successfully");
+	} catch (error) {
+		console.error("Error deleting milestone:", error);
+		throw error;
+	}
+}
+
+// Update home page with milestone data
+function updateHomePage(milestones) {
+	updateCarousel(milestones);
+	updateRecentMilestone(milestones);
+	updateUpcomingMilestone(milestones);
+	updateMilestoneOverview(milestones);
+}
+
+// Update carousel with milestones
+function updateCarousel(milestones) {
+	const carouselItems = document.querySelector(".carousel-items");
+	if (!carouselItems) return;
+
+	carouselItems.innerHTML = "";
+
+	// Show up to 4 most recent milestones in carousel
+	const recentMilestones = milestones.slice(0, 4);
+
+	if (recentMilestones.length === 0) {
+		// Show baby's birthday if no milestones
+		const card = document.createElement("div");
+		card.className = "carousel-card";
+		card.innerHTML = `
+			<div class="blue-heading">Baby's Birth</div>
+			<div class="image-wrapper"></div>
+			<p class="card-date">${formatDate(birthDate.toISOString().split("T")[0])}</p>
+		`;
+		carouselItems.appendChild(card);
+	} else {
+		recentMilestones.forEach((milestone) => {
+			const card = document.createElement("div");
+			card.className = "carousel-card";
+			card.innerHTML = `
+				<div class="blue-heading">${milestone.title}</div>
+				<div class="image-wrapper">
+					${milestone.imageUrl ? `<img src="${milestone.imageUrl}" alt="${milestone.title}">` : ""}
+				</div>
+				<p class="card-date">${formatDate(milestone.date)}</p>
+			`;
+			carouselItems.appendChild(card);
+		});
+	}
+}
+
+// Update recent milestone section
+function updateRecentMilestone(milestones) {
+	const recentMilestoneSection = document.querySelector(".recent-milestones .milestone-item");
+	if (!recentMilestoneSection) return;
+
+	const now = new Date();
+	const pastMilestones = milestones.filter((m) => new Date(m.date) <= now);
+
+	if (pastMilestones.length === 0) {
+		// Show baby's birthday if no past milestones
+		recentMilestoneSection.innerHTML = `
+			<p class="milestone-title">Baby's Birth</p>
+			<p class="milestone-date">${formatDate(birthDate.toISOString().split("T")[0])}</p>
+		`;
+	} else {
+		const mostRecent = pastMilestones[0];
+		recentMilestoneSection.innerHTML = `
+			<p class="milestone-title">${mostRecent.title}</p>
+			<p class="milestone-date">${formatDate(mostRecent.date)}</p>
+		`;
+	}
+}
+
+// Update upcoming milestone section
+function updateUpcomingMilestone(milestones) {
+	const upcomingMilestoneSection = document.querySelector(".upcoming-milestones .milestone-item");
+	if (!upcomingMilestoneSection) return;
+
+	const now = new Date();
+	const futureMilestones = milestones
+		.filter((m) => new Date(m.date) > now)
+		.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+	if (futureMilestones.length === 0) {
+		// Calculate next birthday
+		const nextBirthday = getNextMilestone(birthDate);
+		const age = getAge(birthDate);
+		const nextAge = age.years + 1;
+
+		upcomingMilestoneSection.innerHTML = `
+			<p class="milestone-title">${
+				nextAge === 1 ? "Baby's First Birthday" : `${nextAge}${getOrdinalSuffix(nextAge)} Birthday`
+			}</p>
+			<p class="milestone-date">${formatDate(nextBirthday.toISOString().split("T")[0])}</p>
+		`;
+	} else {
+		const nextMilestone = futureMilestones[0];
+		upcomingMilestoneSection.innerHTML = `
+			<p class="milestone-title">${nextMilestone.title}</p>
+			<p class="milestone-date">${formatDate(nextMilestone.date)}</p>
+		`;
+	}
+}
+
+// Update milestone overview statistics
+function updateMilestoneOverview(milestones) {
+	const overviewStats = document.querySelectorAll(".overview-stat");
+	if (overviewStats.length < 2) return;
+
+	// Total milestones
+	overviewStats[0].textContent = `Total Milestones: ${milestones.length}`;
+
+	// Next milestone
+	const now = new Date();
+	const futureMilestones = milestones
+		.filter((m) => new Date(m.date) > now)
+		.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+	if (futureMilestones.length === 0) {
+		const age = getAge(birthDate);
+		const nextAge = age.years + 1;
+		overviewStats[1].textContent = `Next Milestone: ${
+			nextAge === 1 ? "First Birthday" : `${nextAge}${getOrdinalSuffix(nextAge)} Birthday`
+		}`;
+	} else {
+		overviewStats[1].textContent = `Next Milestone: ${futureMilestones[0].title}`;
+	}
+}
+
+// Utility function to format dates
+function formatDate(dateString) {
+	const date = new Date(dateString);
+	return date.toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+	});
+}
+
+// Utility function to get ordinal suffix
+function getOrdinalSuffix(num) {
+	const j = num % 10;
+	const k = num % 100;
+	if (j === 1 && k !== 11) return "st";
+	if (j === 2 && k !== 12) return "nd";
+	if (j === 3 && k !== 13) return "rd";
+	return "th";
 }
 
 // Helper function to create a test user (for development purposes)
@@ -521,9 +841,6 @@ function createTestUser() {
 			}
 		});
 }
-
-// Uncomment the line below to create a test user (run once)
-// createTestUser();
 
 // Enable edit mode when user is authenticated
 function enableEditMode() {
@@ -595,11 +912,13 @@ auth.onAuthStateChanged((user) => {
 		console.log("User is signed in:", user.email);
 		// User is signed in, enable edit functionality
 		enableEditMode();
+		// Load milestones after authentication
+		loadMilestones();
 	} else {
 		console.log("User is signed out");
 		// User is signed out, disable edit functionality
 		disableEditMode();
+		// Still load milestones for viewing
+		loadMilestones();
 	}
 });
-
-// Add sign out functionality to navigation
