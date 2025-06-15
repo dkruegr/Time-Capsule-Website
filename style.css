@@ -732,9 +732,93 @@ section {
 
 .page {
 	display: none;
+	position: relative;
 }
 
 .page.active {
+	display: block;
+}
+
+.milestones-container {
+	background-color: #ffc1cc;
+	border-radius: 0.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: 1.5rem 1rem;
+}
+
+.milestones-container-title {
+	font-family: var(--font-pacifico);
+	font-size: 1.5rem;
+	color: #000;
+}
+
+.milestone-card {
+	background-color: #fff;
+	border: 1px solid #000;
+	border-radius: 0.5rem;
+	padding: 1rem 1.5rem;
+	display: flex;
+	gap: 0.5rem;
+}
+
+.milestone-image {
+	width: 360px;
+	height: 180px;
+	border-radius: 0.5rem;
+	overflow: hidden;
+	background-color: #989898;
+}
+
+.milestone-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.delete-milestone {
+	background-color: #ff6b6b;
+	color: white;
+	border: none;
+	padding: 0.5rem 1rem;
+	border-radius: 0.25rem;
+	cursor: pointer;
+	font-size: 0.875rem;
+	transition: background-color 0.3s ease;
+	margin-left: auto;
+}
+
+/* Floating Add Milestone Button */
+.add-milestone-btn {
+	position: fixed;
+	bottom: 2rem;
+	right: 2rem;
+	background-color: #ffc0cc;
+	color: #118ab2;
+	border: none;
+	padding: 0.75rem;
+	border-radius: 0.5rem;
+	cursor: pointer;
+	font-family: var(--font-poppins);
+	font-weight: 500;
+	font-size: 1rem;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	transition: all 0.3s ease;
+	z-index: 1000;
+	display: none;
+}
+
+.add-milestone-btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.add-milestone-btn:active {
+	transform: translateY(0);
+}
+
+#milestones-page.active .add-milestone-btn {
 	display: block;
 }
 
@@ -935,5 +1019,14 @@ section {
 	.grant-access-btn {
 		font-size: 1rem;
 		padding: 0.75rem 1.5rem;
+	}
+
+	.milestone-card {
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.milestone-image {
+		width: 100%;
 	}
 }
