@@ -32,8 +32,8 @@
 		<!-- Main App Container -->
 		<div id="app">
 			<!-- Home Page -->
-			<!-- <div id="home-page" class="page active"> -->
-			<div id="home-page" class="page">
+			<div id="home-page" class="page active">
+				<!-- <div id="home-page" class="page"> -->
 				<div id="authModal" class="modal-overlay">
 					<div class="modal-container">
 						<button class="modal-close" id="closeModal">&times;</button>
@@ -297,7 +297,41 @@
 				</footer>
 			</div>
 			<!-- Milestones Page -->
-			<div id="milestones-page" class="page active">
+			<!-- <div id="milestones-page" class="page active"> -->
+			<div id="milestones-page" class="page">
+				<!-- Add Milestone Modal -->
+				<div id="addMilestoneModal" class="modal-overlay">
+					<div class="modal-container">
+						<button class="modal-close" id="closeMilestoneModal">&times;</button>
+						<div class="modal-content">
+							<h2 class="modal-title">Add New Milestone</h2>
+							<form class="milestone-form" id="milestoneForm">
+								<div class="form-group milestone-form-group">
+									<label for="milestoneTitle">Title</label>
+									<input type="text" id="milestoneTitle" name="milestoneTitle" required />
+								</div>
+
+								<div class="form-group milestone-form-group">
+									<label for="milestoneFile">File</label>
+									<div class="file-input-container">
+										<input type="file" id="milestoneFile" name="milestoneFile" accept="image/*" />
+										<label for="milestoneFile" class="file-input-label">
+											Choose File <span class="file-status">No file chosen</span>
+										</label>
+									</div>
+									<p class="file-info">File should be a maximum of 20mb</p>
+								</div>
+
+								<div class="form-group milestone-form-group">
+									<label for="milestoneDate">Date</label>
+									<input type="date" id="milestoneDate" name="milestoneDate" required />
+								</div>
+								<button type="submit" class="save-milestone-btn">Save</button>
+							</form>
+						</div>
+					</div>
+				</div>
+
 				<main class="milestones-container">
 					<div class="milestones-container-title">Explore Every Milestone</div>
 					<div class="milestone-card">

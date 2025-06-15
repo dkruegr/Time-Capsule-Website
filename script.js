@@ -236,8 +236,6 @@ function initializeNavigation() {
 			}
 		});
 	}
-
-	initializeMilestoneActions();
 }
 
 function updateHeaderCTA(mode) {
@@ -298,49 +296,77 @@ document.addEventListener("keydown", (e) => {
 	}
 });
 
-// milestone actions
-// function initializeMilestoneActions() {
-// 	// Add milestone button
-// 	const addMilestoneBtn = document.querySelector(".add-milestone-btn");
-// 	if (addMilestoneBtn) {
-// 		addMilestoneBtn.addEventListener("click", () => {
-// 			alert("Add Milestone functionality - Coming Soon!");
-// 		});
-// 	}
+// Milestone Modal Functionality
+const addMilestoneBtn = document.querySelector(".add-milestone-btn");
+const addMilestoneModal = document.getElementById("addMilestoneModal");
+const closeMilestoneModal = document.getElementById("closeMilestoneModal");
+const milestoneForm = document.getElementById("milestoneForm");
+const fileInput = document.getElementById("milestoneFile");
+const fileStatus = document.querySelector(".file-status");
 
-// 	// Edit buttons
-// 	const editButtons = document.querySelectorAll(".edit-btn");
-// 	editButtons.forEach((btn) => {
-// 		btn.addEventListener("click", (e) => {
-// 			e.stopPropagation();
-// 			alert("Edit functionality - Coming Soon!");
-// 		});
-// 	});
+// Open milestone modal
+addMilestoneBtn.addEventListener("click", () => {
+	addMilestoneModal.classList.add("active");
+	document.body.style.overflow = "hidden";
+});
 
-// 	// Share buttons
-// 	const shareButtons = document.querySelectorAll(".share-btn");
-// 	shareButtons.forEach((btn) => {
-// 		btn.addEventListener("click", (e) => {
-// 			e.stopPropagation();
-// 			alert("Share functionality - Coming Soon!");
-// 		});
-// 	});
+// Close milestone modal
+closeMilestoneModal.addEventListener("click", () => {
+	addMilestoneModal.classList.remove("active");
+	document.body.style.overflow = "auto";
+});
 
-// 	// Delete buttons
-// 	const deleteButtons = document.querySelectorAll(".delete-btn");
-// 	deleteButtons.forEach((btn) => {
-// 		btn.addEventListener("click", (e) => {
-// 			e.stopPropagation();
-// 			if (confirm("Are you sure you want to delete this milestone?")) {
-// 				const card = btn.closest(".milestone-card");
-// 				if (card) {
-// 					card.style.opacity = "0";
-// 					card.style.transform = "scale(0.8)";
-// 					setTimeout(() => {
-// 						card.remove();
-// 					}, 300);
-// 				}
-// 			}
-// 		});
-// 	});
-// }
+// Close modal when clicking on overlay
+addMilestoneModal.addEventListener("click", (e) => {
+	if (e.target === addMilestoneModal) {
+		addMilestoneModal.classList.remove("active");
+		document.body.style.overflow = "auto";
+	}
+});
+
+// Update file status when files are selected
+fileInput.addEventListener("change", (e) => {
+	const files = e.target.files;
+	if (files.length === 0) {
+		fileStatus.textContent = "No file chosen";
+	} else if (files.length === 1) {
+		fileStatus.textContent = files[0].name;
+	} else {
+		fileStatus.textContent = `${files.length} files selected`;
+	}
+});
+
+// Handle milestone form submission
+milestoneForm.addEventListener("submit", (e) => {
+	e.preventDefault();
+
+	const title = document.getElementById("milestoneTitle").value;
+	const files = fileInput.files;
+	const date = document.getElementById("milestoneDate").value;
+
+	if (title && date) {
+		// Here you would typically save the milestone data
+		console.log("New milestone:", { title, files, date });
+
+		// Close modal
+		addMilestoneModal.classList.remove("active");
+		document.body.style.overflow = "auto";
+
+		// Reset form
+		milestoneForm.reset();
+		fileStatus.textContent = "No file chosen";
+
+		// Show success message (optional)
+		alert("Milestone added successfully!");
+	} else {
+		alert("Please fill in all required fields.");
+	}
+});
+
+// Close milestone modal with Escape key
+document.addEventListener("keydown", (e) => {
+	if (e.key === "Escape" && addMilestoneModal.classList.contains("active")) {
+		addMilestoneModal.classList.remove("active");
+		document.body.style.overflow = "auto";
+	}
+});
