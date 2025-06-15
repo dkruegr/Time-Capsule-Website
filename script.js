@@ -1,6 +1,24 @@
 // Set baby's birth date
 const birthDate = new Date("2024-10-04T00:00:00"); // <-- Edit as needed
 
+// Initialize authentication state
+let currentUser = null;
+
+// Firebase configuration
+const firebaseConfig = {
+	apiKey: "AIzaSyCEeMYUSRfmHOGIzshjIbLcUiNUJnxhusA",
+	authDomain: "time-capsule-website.firebaseapp.com",
+	projectId: "time-capsule-website",
+	storageBucket: "time-capsule-website.firebasestorage.app",
+	messagingSenderId: "948092733026",
+	appId: "1:948092733026:web:ed26f5869dafaa243ef33b",
+	measurementId: "G-YCNFL7Q6PD",
+};
+
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
 updateCountdown();
 updateAge();
 setInterval(() => {
@@ -155,8 +173,15 @@ function generateCalendar() {
 document.addEventListener("DOMContentLoaded", function () {
 	generateCalendar();
 	initializeCarousel();
-	initializeNavigation();
+
+	// Initialize navigation after a small delay to ensure all elements are ready
+	setTimeout(() => {
+		updateNavigation();
+	}, 100);
+
 	initializeMilestoneActions();
+
+	disableEditMode();
 });
 
 function initializeCarousel() {
@@ -220,24 +245,6 @@ function showPage(pageId) {
 	}
 }
 
-function initializeNavigation() {
-	const headerCta = document.querySelector(".header-cta");
-
-	if (headerCta) {
-		headerCta.addEventListener("click", () => {
-			const currentPage = document.querySelector(".page.active");
-
-			if (currentPage && currentPage.id === "home-page") {
-				authModal.classList.add("active");
-				document.body.style.overflow = "hidden";
-			} else {
-				showPage("home-page");
-				updateHeaderCTA("explore");
-			}
-		});
-	}
-}
-
 function updateHeaderCTA(mode) {
 	const headerCta = document.querySelector(".header-cta");
 	const ctaText = headerCta.querySelector(".desktop");
@@ -267,13 +274,34 @@ authModal.addEventListener("click", (e) => {
 });
 
 // Handle form submission
-authForm.addEventListener("submit", (e) => {
+authForm.addEventListener("submit", async (e) => {
 	e.preventDefault();
 
-	const username = document.getElementById("username").value;
+	const email = document.getElementById("username").value;
 	const password = document.getElementById("password").value;
+	const submitButton = authForm.querySelector('button[type="submit"]');
+	const errorDiv = document.getElementById("authError");
 
-	if (username && password) {
+	// Clear previous error
+	errorDiv.style.display = "none";
+	errorDiv.textContent = "";
+
+	if (!email || !password) {
+		showAuthError("Please enter both email and password.");
+		return;
+	}
+
+	// Disable button and show loading state
+	submitButton.disabled = true;
+	submitButton.textContent = "Signing in...";
+
+	try {
+		// Sign in with Firebase Auth
+		const userCredential = await auth.signInWithEmailAndPassword(email, password);
+		const user = userCredential.user;
+
+		console.log("User signed in:", user.email);
+
 		// Close modal
 		authModal.classList.remove("active");
 		document.body.style.overflow = "auto";
@@ -283,90 +311,295 @@ authForm.addEventListener("submit", (e) => {
 
 		// Reset form
 		authForm.reset();
+	} catch (error) {
+		console.error("Authentication error:", error);
+
+		// Handle specific error cases
+		let errorMessage = "";
+		switch (error.code) {
+			case "auth/user-not-found":
+				errorMessage = "No user found with this email address.";
+				break;
+			case "auth/wrong-password":
+				errorMessage = "Incorrect password. Please try again.";
+				break;
+			case "auth/invalid-email":
+				errorMessage = "Please enter a valid email address.";
+				break;
+			case "auth/too-many-requests":
+				errorMessage = "Too many failed attempts. Please try again later.";
+				break;
+			case "auth/user-disabled":
+				errorMessage = "This account has been disabled.";
+				break;
+			default:
+				errorMessage = "Authentication failed. Please check your credentials.";
+		}
+
+		showAuthError(errorMessage);
+	} finally {
+		// Re-enable button
+		submitButton.disabled = false;
+		submitButton.textContent = "Grant Access";
+	}
+});
+
+function showAuthError(message) {
+	const errorDiv = document.getElementById("authError");
+	const statusDiv = document.getElementById("authStatus");
+
+	// Hide status and show error
+	statusDiv.style.display = "none";
+	errorDiv.textContent = message;
+	errorDiv.style.display = "block";
+}
+
+function showAuthStatus(message) {
+	const errorDiv = document.getElementById("authError");
+	const statusDiv = document.getElementById("authStatus");
+
+	// Hide error and show status
+	errorDiv.style.display = "none";
+	statusDiv.textContent = message;
+	statusDiv.style.display = "block";
+}
+
+function hideAuthMessages() {
+	const errorDiv = document.getElementById("authError");
+	const statusDiv = document.getElementById("authStatus");
+
+	errorDiv.style.display = "none";
+	statusDiv.style.display = "none";
+}
+
+function initializeMilestoneActions() {
+	// Initialize milestone modal and form
+	const addMilestoneBtn = document.querySelector(".add-milestone-btn");
+	const addMilestoneModal = document.getElementById("addMilestoneModal");
+	const closeMilestoneModal = document.getElementById("closeMilestoneModal");
+	const milestoneForm = document.getElementById("milestoneForm");
+	const fileInput = document.getElementById("milestoneFile");
+	const fileStatus = document.querySelector(".file-status");
+
+	// Open milestone modal (only if authenticated)
+	if (addMilestoneBtn) {
+		addMilestoneBtn.addEventListener("click", () => {
+			if (!currentUser) {
+				alert("Please sign in to add milestones.");
+				return;
+			}
+			addMilestoneModal.classList.add("active");
+			document.body.style.overflow = "hidden";
+		});
+	}
+
+	// Close milestone modal
+	if (closeMilestoneModal) {
+		closeMilestoneModal.addEventListener("click", () => {
+			addMilestoneModal.classList.remove("active");
+			document.body.style.overflow = "auto";
+		});
+	}
+
+	// Close modal when clicking on overlay
+	if (addMilestoneModal) {
+		addMilestoneModal.addEventListener("click", (e) => {
+			if (e.target === addMilestoneModal) {
+				addMilestoneModal.classList.remove("active");
+				document.body.style.overflow = "auto";
+			}
+		});
+	}
+
+	// Update file status when files are selected
+	if (fileInput && fileStatus) {
+		fileInput.addEventListener("change", (e) => {
+			const files = e.target.files;
+			if (files.length === 0) {
+				fileStatus.textContent = "No file chosen";
+			} else if (files.length === 1) {
+				fileStatus.textContent = files[0].name;
+			} else {
+				fileStatus.textContent = `${files.length} files selected`;
+			}
+		});
+	}
+
+	// Handle milestone form submission
+	if (milestoneForm) {
+		milestoneForm.addEventListener("submit", async (e) => {
+			e.preventDefault();
+
+			if (!currentUser) {
+				alert("Please sign in to add milestones.");
+				return;
+			}
+
+			const title = document.getElementById("milestoneTitle").value;
+			const files = fileInput.files;
+			const date = document.getElementById("milestoneDate").value;
+			const submitButton = milestoneForm.querySelector('button[type="submit"]');
+
+			if (!title || !date) {
+				alert("Please fill in all required fields.");
+				return;
+			}
+
+			// Disable button and show loading state
+			submitButton.disabled = true;
+			submitButton.textContent = "Saving...";
+
+			try {
+				// Here you would typically save the milestone data to Firebase
+				console.log("New milestone:", { title, files, date, userId: currentUser.uid });
+
+				// Close modal
+				addMilestoneModal.classList.remove("active");
+				document.body.style.overflow = "auto";
+
+				// Reset form
+				milestoneForm.reset();
+				fileStatus.textContent = "No file chosen";
+
+				// Show success message
+				alert("Milestone added successfully!");
+			} catch (error) {
+				console.error("Error adding milestone:", error);
+				alert("Error adding milestone. Please try again.");
+			} finally {
+				// Re-enable button
+				submitButton.disabled = false;
+				submitButton.textContent = "Save";
+			}
+		});
+	}
+
+	// Handle delete milestone buttons (only if authenticated)
+	const deleteButtons = document.querySelectorAll(".delete-milestone");
+	deleteButtons.forEach((button) => {
+		button.addEventListener("click", (e) => {
+			if (!currentUser) {
+				alert("Please sign in to delete milestones.");
+				return;
+			}
+
+			if (confirm("Are you sure you want to delete this milestone?")) {
+				// Here you would typically delete the milestone from Firebase
+				const milestoneCard = button.closest(".milestone-card");
+				if (milestoneCard) {
+					milestoneCard.remove();
+					console.log("Milestone deleted");
+				}
+			}
+		});
+	});
+
+	// Close milestone modal with Escape key
+	document.addEventListener("keydown", (e) => {
+		if (e.key === "Escape" && addMilestoneModal && addMilestoneModal.classList.contains("active")) {
+			addMilestoneModal.classList.remove("active");
+			document.body.style.overflow = "auto";
+		}
+	});
+}
+
+// Helper function to create a test user (for development purposes)
+function createTestUser() {
+	const email = "admin@timecapsule.com";
+	const password = "password123";
+
+	auth
+		.createUserWithEmailAndPassword(email, password)
+		.then((userCredential) => {
+			console.log("Test user created:", userCredential.user.email);
+		})
+		.catch((error) => {
+			if (error.code === "auth/email-already-in-use") {
+				console.log("Test user already exists:", email);
+			} else {
+				console.error("Error creating test user:", error);
+			}
+		});
+}
+
+// Uncomment the line below to create a test user (run once)
+// createTestUser();
+
+// Enable edit mode when user is authenticated
+function enableEditMode() {
+	const addMilestoneBtn = document.querySelector(".add-milestone-btn");
+	const deleteButtons = document.querySelectorAll(".delete-milestone");
+
+	if (addMilestoneBtn) {
+		addMilestoneBtn.style.display = "flex";
+	}
+
+	deleteButtons.forEach((btn) => {
+		btn.style.display = "block";
+	});
+}
+
+// Disable edit mode when user is not authenticated
+function disableEditMode() {
+	const addMilestoneBtn = document.querySelector(".add-milestone-btn");
+	const deleteButtons = document.querySelectorAll(".delete-milestone");
+
+	if (addMilestoneBtn) {
+		addMilestoneBtn.style.display = "none";
+	}
+
+	deleteButtons.forEach((btn) => {
+		btn.style.display = "none";
+	});
+}
+
+// Add navigation functionality
+function updateNavigation() {
+	const headerCta = document.querySelector(".header-cta");
+
+	if (headerCta) {
+		// Remove existing event listeners by cloning the element
+		const newHeaderCta = headerCta.cloneNode(true);
+		headerCta.parentNode.replaceChild(newHeaderCta, headerCta);
+
+		newHeaderCta.addEventListener("click", () => {
+			const currentPage = document.querySelector(".page.active");
+
+			if (currentPage && currentPage.id === "home-page") {
+				if (currentUser) {
+					// User is signed in, go to milestones
+					showPage("milestones-page");
+					updateHeaderCTA("home");
+				} else {
+					// User not signed in, show auth modal
+					const authModal = document.getElementById("authModal");
+					if (authModal) {
+						authModal.classList.add("active");
+						document.body.style.overflow = "hidden";
+					}
+				}
+			} else {
+				// On milestones page, go back to home
+				showPage("home-page");
+				updateHeaderCTA("explore");
+			}
+		});
+	}
+}
+
+// Listen for authentication state changes
+auth.onAuthStateChanged((user) => {
+	currentUser = user;
+
+	if (user) {
+		console.log("User is signed in:", user.email);
+		// User is signed in, enable edit functionality
+		enableEditMode();
 	} else {
-		alert("Please enter both username and password.");
+		console.log("User is signed out");
+		// User is signed out, disable edit functionality
+		disableEditMode();
 	}
 });
 
-// Close modal with Escape key
-document.addEventListener("keydown", (e) => {
-	if (e.key === "Escape" && authModal.classList.contains("active")) {
-		authModal.classList.remove("active");
-		document.body.style.overflow = "auto";
-	}
-});
-
-// Milestone Modal Functionality
-const addMilestoneBtn = document.querySelector(".add-milestone-btn");
-const addMilestoneModal = document.getElementById("addMilestoneModal");
-const closeMilestoneModal = document.getElementById("closeMilestoneModal");
-const milestoneForm = document.getElementById("milestoneForm");
-const fileInput = document.getElementById("milestoneFile");
-const fileStatus = document.querySelector(".file-status");
-
-// Open milestone modal
-addMilestoneBtn.addEventListener("click", () => {
-	addMilestoneModal.classList.add("active");
-	document.body.style.overflow = "hidden";
-});
-
-// Close milestone modal
-closeMilestoneModal.addEventListener("click", () => {
-	addMilestoneModal.classList.remove("active");
-	document.body.style.overflow = "auto";
-});
-
-// Close modal when clicking on overlay
-addMilestoneModal.addEventListener("click", (e) => {
-	if (e.target === addMilestoneModal) {
-		addMilestoneModal.classList.remove("active");
-		document.body.style.overflow = "auto";
-	}
-});
-
-// Update file status when files are selected
-fileInput.addEventListener("change", (e) => {
-	const files = e.target.files;
-	if (files.length === 0) {
-		fileStatus.textContent = "No file chosen";
-	} else if (files.length === 1) {
-		fileStatus.textContent = files[0].name;
-	} else {
-		fileStatus.textContent = `${files.length} files selected`;
-	}
-});
-
-// Handle milestone form submission
-milestoneForm.addEventListener("submit", (e) => {
-	e.preventDefault();
-
-	const title = document.getElementById("milestoneTitle").value;
-	const files = fileInput.files;
-	const date = document.getElementById("milestoneDate").value;
-
-	if (title && date) {
-		// Here you would typically save the milestone data
-		console.log("New milestone:", { title, files, date });
-
-		// Close modal
-		addMilestoneModal.classList.remove("active");
-		document.body.style.overflow = "auto";
-
-		// Reset form
-		milestoneForm.reset();
-		fileStatus.textContent = "No file chosen";
-
-		// Show success message (optional)
-		alert("Milestone added successfully!");
-	} else {
-		alert("Please fill in all required fields.");
-	}
-});
-
-// Close milestone modal with Escape key
-document.addEventListener("keydown", (e) => {
-	if (e.key === "Escape" && addMilestoneModal.classList.contains("active")) {
-		addMilestoneModal.classList.remove("active");
-		document.body.style.overflow = "auto";
-	}
-});
+// Add sign out functionality to navigation
