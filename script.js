@@ -922,3 +922,51 @@ auth.onAuthStateChanged((user) => {
 		loadMilestones();
 	}
 });
+
+
+// Upload Logic
+const fileInput = document.getElementById("milestoneFile");
+const uploadButton = document.getElementsByClassName("save-milestone-btn")[0];
+
+if (uploadButton) {
+  uploadButton.addEventListener("click", () => {
+    const files = fileInput.files;
+    if (!files.length) return;
+
+    const imageUrls = [];
+    const uploadPromises = [];
+
+    [...files].forEach((file) => {
+      const filePath = `uploads/${Date.now()}_${file.name}`;
+      const storageRef = firebase.storage().ref(filePath);
+
+      const uploadTask = storageRef.put(file)
+        .then(snapshot => snapshot.ref.getDownloadURL())
+        .then(url => {
+          console.log("Uploaded:", url);
+          imageUrls.push(url);
+        })
+        .catch(err => {
+          console.error(`Upload failed for ${file.name}:`, err);
+        });
+
+      uploadPromises.push(uploadTask);
+    });
+
+    Promise.all(uploadPromises)
+      .then(() => {
+        console.log("All files uploaded:", imageUrls);
+
+        // TODO: Attach imageUrls to milestone and save to Firestore
+        // You can create a milestoneData object here and save it
+      })
+      .catch(err => {
+        console.error("One or more uploads failed:", err);
+      });
+  });
+}
+
+
+
+
+
