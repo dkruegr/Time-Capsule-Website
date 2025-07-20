@@ -206,23 +206,27 @@
 					<div class="carousel-items">
 						<div class="carousel-card">
 							<div class="blue-heading">Milestone Title 1</div>
-							<div class="image-wrapper"></div>
+							<img class="image-wrapper" src="image-url-here" alt="Milestone Image">
+
 							<p class="card-date">04/11/2024</p>
 						</div>
 						<div class="carousel-card">
 							<div class="blue-heading">Milestone Title 2</div>
-							<div class="image-wrapper"></div>
+							<img class="image-wrapper" src="image-url-here" alt="Milestone Image">
+
 							<p class="card-date">04/11/2024</p>
 						</div>
 
 						<div class="carousel-card">
 							<div class="blue-heading">Milestone Title 3</div>
-							<div class="image-wrapper"></div>
+							<img class="image-wrapper" src="image-url-here" alt="Milestone Image">
+
 							<p class="card-date">04/11/2024</p>
 						</div>
 						<div class="carousel-card">
 							<div class="blue-heading">Milestone Title 4</div>
-							<div class="image-wrapper"></div>
+							<img class="image-wrapper" src="image-url-here" alt="Milestone Image">
+
 							<p class="card-date">04/11/2024</p>
 						</div>
 					</div>
@@ -307,7 +311,7 @@
 								<div class="form-group milestone-form-group">
 									<label for="milestoneFile">File</label>
 									<div class="file-input-container">
-										<input type="file" id="milestoneFile" name="milestoneFile" accept="image/*" multiple />
+										<input type="file" id="milestoneFile" name="milestoneFile" accept="image/*"/>
 										<label for="milestoneFile" class="file-input-label">
 											Choose File <span class="file-status">No file chosen</span>
 										</label>
@@ -328,7 +332,8 @@
 				<main class="milestones-container">
 					<div class="milestones-container-title">Explore Every Milestone</div>
 					<div class="milestone-card">
-						<div class="milestone-image"></div>
+						<img class="milestone-image" src="image-url-here" alt="Milestone Image">
+
 						<div>
 							<div class="blue-heading">Baby's First Month on Earth</div>
 							<p>04/11/2024</p>
@@ -339,7 +344,7 @@
 					</div>
 
 					<div class="milestone-card">
-						<div class="milestone-image"></div>
+						<img class="milestone-image"></img>
 						<div>
 							<div class="blue-heading">Baby's First Month on Earth</div>
 							<p>04/11/2024</p>
@@ -366,6 +371,16 @@
 				</button>
 			</div>
 		</div>
+
+<!-- Lightbox Scrim -->
+<div id="lightbox-scrim" class="lightbox-scrim hidden">
+  <div class="lightbox-content">
+    <span class="lightbox-close" id="lightbox-close">&times;</span>
+    <img id="lightbox-image" src="" alt="Expanded View" />
+  </div>
+</div>
+
+
 		<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 		<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 		<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>

@@ -511,7 +511,7 @@ async function addMilestone(title, date, file) {
 			console.log("Image uploaded successfully:", imageUrl);
 		}
 
-		// Add milestone document to Firestore
+        // Add milestone document to Firestore
 		const milestoneData = {
 			title: title,
 			date: date,
@@ -966,7 +966,33 @@ if (uploadButton) {
   });
 }
 
+// Lightbox Scrim Logic
+document.addEventListener("DOMContentLoaded", () => {
+  const lightbox = document.getElementById("lightbox-scrim");
+  const lightboxImage = document.getElementById("lightbox-image");
+  const closeBtn = document.getElementById("lightbox-close");
 
+  function openLightbox(imgSrc) {
+    lightboxImage.src = imgSrc;
+    lightbox.classList.add("active");
+  }
 
+  function closeLightbox() {
+    lightbox.classList.remove("active");
+    lightboxImage.src = "";
+  }
 
+  closeBtn.addEventListener("click", closeLightbox);
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
 
+  // Attach to milestone and carousel images
+  const milestoneImages = document.querySelectorAll("img");
+  milestoneImages.forEach((img) => {
+    img.style.cursor = "pointer";
+    img.addEventListener("click", () => {
+      openLightbox(img.src);
+    });
+  });
+});
