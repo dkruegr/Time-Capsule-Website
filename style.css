@@ -16,10 +16,13 @@
 body {
 	font-family: var(--font-poppins);
 	background-color: var(--color-background);
+	margin-left: 32px;
+	margin-right: 32px;
+	margin-bottom: 16px;
 }
 
 header {
-	padding: 1rem 2rem;
+	padding: 1rem 0rem;
 	border-bottom: 1px solid #000;
 }
 
@@ -1159,12 +1162,13 @@ section {
 
 .lightbox-scrim.active {
   display: flex;
+  overflow: auto;
 }
 
 .lightbox-content {
   position: relative;
-  max-width: 90%;
-  max-height: 90%;
+  max-width: 80%;
+  max-height: 80%;
 }
 
 .lightbox-content img {
@@ -1172,6 +1176,7 @@ section {
   max-height: 100%;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0,0,0,0.5);
+
 }
 
 .lightbox-close {
