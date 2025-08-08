@@ -547,6 +547,13 @@ async function loadMilestones() {
 		console.log("Loaded milestones:", milestones);
 		displayMilestones(milestones);
 		updateHomePage(milestones);
+		try {
+  attachLightboxListeners();
+} catch (err) {
+  console.error("Lightbox listener error:", err);
+}
+;
+
 	} catch (error) {
 		console.error("Error loading milestones:", error);
 
@@ -566,6 +573,13 @@ async function loadMilestones() {
 
 				displayMilestones(milestones);
 				updateHomePage(milestones);
+				try {
+  attachLightboxListeners();
+} catch (err) {
+  console.error("Lightbox listener error:", err);
+}
+
+
 			} catch (innerError) {
 				console.error("Error loading public milestones:", innerError);
 				// Show default content if loading fails
@@ -972,11 +986,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const lightboxImage = document.getElementById("lightbox-image");
   const closeBtn = document.getElementById("lightbox-close");
 
-  function openLightbox(imgSrc) {
-    lightboxImage.src = imgSrc;
-    lightbox.classList.add("active");
-  }
-
   function closeLightbox() {
     lightbox.classList.remove("active");
     lightboxImage.src = "";
@@ -986,13 +995,32 @@ document.addEventListener("DOMContentLoaded", () => {
   lightbox.addEventListener("click", (e) => {
     if (e.target === lightbox) closeLightbox();
   });
-
-  // Attach to milestone and carousel images
-  const milestoneImages = document.querySelectorAll("img");
-  milestoneImages.forEach((img) => {
-    img.style.cursor = "pointer";
-    img.addEventListener("click", () => {
-      openLightbox(img.src);
-    });
-  });
 });
+
+// Lightbox Open Function
+function openLightbox(imgSrc) {
+  const lightbox = document.getElementById("lightbox-scrim");
+  const lightboxImage = document.getElementById("lightbox-image");
+  lightboxImage.src = imgSrc;
+  lightbox.classList.add("active");
+}
+
+
+ // Lightbox listener setup
+  function openLightboxHandler(e) {
+    const isValid = e.target.closest(".image-wrapper") || e.target.closest(".bento-photo");
+    if (!isValid) return;
+    openLightbox(e.target.src);
+  }
+
+  function attachLightboxListeners() {
+    const allLightboxImages = document.querySelectorAll(
+      ".bento-photo img, .image-wrapper img, .milestone-image img"
+    );
+
+    allLightboxImages.forEach((img) => {
+      img.style.cursor = "pointer";
+      img.removeEventListener("click", openLightboxHandler);
+      img.addEventListener("click", openLightboxHandler);
+    });
+  }
