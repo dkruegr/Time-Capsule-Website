@@ -497,18 +497,29 @@ async function addMilestone(title, date, file) {
 
 		let imageUrl = null;
 		let imagePath = null;
+		let videoUrl = null;
+		let videoPath = null;
 
-		// Upload image if provided
+		// Upload file if provided
 		if (file) {
-			console.log("Uploading image...");
+			console.log("Uploading file...");
 			const timestamp = Date.now();
 			const fileName = `milestones/${timestamp}_${file.name}`;
-			imagePath = fileName;
 			const storageRef = storage.ref(fileName);
 
 			const snapshot = await storageRef.put(file);
-			imageUrl = await snapshot.ref.getDownloadURL();
-			console.log("Image uploaded successfully:", imageUrl);
+			const downloadUrl = await snapshot.ref.getDownloadURL();
+
+			// Check if it's a video or image
+			if (file.type.startsWith("video/")) {
+				videoUrl = downloadUrl;
+				videoPath = fileName;
+				console.log("Video uploaded successfully:", videoUrl);
+			} else if (file.type.startsWith("image/")) {
+				imageUrl = downloadUrl;
+				imagePath = fileName;
+				console.log("Image uploaded successfully:", imageUrl);
+			}
 		}
 
         // Add milestone document to Firestore
@@ -517,6 +528,8 @@ async function addMilestone(title, date, file) {
 			date: date,
 			imageUrl: imageUrl,
 			imagePath: imagePath,
+			videoUrl: videoUrl,
+			videoPath: videoPath,
 			createdAt: firebase.firestore.FieldValue.serverTimestamp(),
 			userId: currentUser.uid,
 		};
@@ -629,9 +642,16 @@ function createMilestoneCard(milestone) {
 	card.className = "milestone-card";
 	card.dataset.milestoneId = milestone.id;
 
+	let mediaHtml = "";
+	if (milestone.videoUrl) {
+		mediaHtml = `<video src="${milestone.videoUrl}" controls></video>`;
+	} else if (milestone.imageUrl) {
+		mediaHtml = `<img src="${milestone.imageUrl}" alt="${milestone.title}">`;
+	}
+
 	card.innerHTML = `
 		<div class="milestone-image">
-			${milestone.imageUrl ? `<img src="${milestone.imageUrl}" alt="${milestone.title}">` : ""}
+			${mediaHtml}
 		</div>
 		<div>
 			<div class="blue-heading">${milestone.title}</div>
@@ -652,7 +672,8 @@ function createMilestoneCard(milestone) {
 
 		if (confirm("Are you sure you want to delete this milestone?")) {
 			try {
-				await deleteMilestone(milestone.id, milestone.imagePath);
+				// Pass both paths if available
+				await deleteMilestone(milestone.id, milestone.imagePath || milestone.videoPath);
 				card.remove();
 				await loadMilestones(); // Refresh to update home page
 				console.log("Milestone deleted successfully");
@@ -724,18 +745,30 @@ function updateCarousel(milestones) {
 		carouselItems.appendChild(card);
 	} else {
 		recentMilestones.forEach((milestone) => {
+
+			let mediaHtml = "";
+
+			if (milestone.videoUrl) {
+				// Preview video without autoplay/controls — lightbox will handle playback
+				mediaHtml = `<video src="${milestone.videoUrl}" muted playsinline preload="metadata"></video>`;
+			} else if (milestone.imageUrl) {
+				mediaHtml = `<img src="${milestone.imageUrl}" alt="${milestone.title}">`;
+			}
+
 			const card = document.createElement("div");
 			card.className = "carousel-card";
 			card.innerHTML = `
 				<div class="blue-heading">${milestone.title}</div>
 				<div class="image-wrapper">
-					${milestone.imageUrl ? `<img src="${milestone.imageUrl}" alt="${milestone.title}">` : ""}
+					${mediaHtml}
 				</div>
 				<p class="card-date">${formatDate(milestone.date)}</p>
 			`;
 			carouselItems.appendChild(card);
 		});
 	}
+	// Attach lightbox listeners after rendering
+	attachLightboxListeners();
 }
 
 // Update recent milestone section
@@ -983,44 +1016,50 @@ if (uploadButton) {
 // Lightbox Scrim Logic
 document.addEventListener("DOMContentLoaded", () => {
   const lightbox = document.getElementById("lightbox-scrim");
-  const lightboxImage = document.getElementById("lightbox-image");
-  const closeBtn = document.getElementById("lightbox-close");
+  const lightboxContent = document.getElementById("lightbox-content");
 
   function closeLightbox() {
     lightbox.classList.remove("active");
-    lightboxImage.src = "";
+    lightboxContent.innerHTML = `<span class="lightbox-close" id="lightbox-close">&times;</span>`;
+    document.getElementById("lightbox-close").addEventListener("click", closeLightbox);
   }
 
-  closeBtn.addEventListener("click", closeLightbox);
+  // Open Lightbox
+  window.openLightbox = function (src, isVideo = false) {
+    // Reset and insert close button
+    lightboxContent.innerHTML = `<span class="lightbox-close" id="lightbox-close">&times;</span>`;
+
+    // Add media
+    if (isVideo) {
+      lightboxContent.innerHTML += `<video src="${src}" controls autoplay style="max-width:100%; max-height:80vh;"></video>`;
+    } else {
+      lightboxContent.innerHTML += `<img src="${src}" alt="" style="max-width:100%; max-height:80vh;">`;
+    }
+
+    lightbox.classList.add("active");
+
+    // Re-bind close button click
+    document.getElementById("lightbox-close").addEventListener("click", closeLightbox);
+  };
+
+  // Close when clicking background (outside media)
   lightbox.addEventListener("click", (e) => {
     if (e.target === lightbox) closeLightbox();
   });
-});
 
-// Lightbox Open Function
-function openLightbox(imgSrc) {
-  const lightbox = document.getElementById("lightbox-scrim");
-  const lightboxImage = document.getElementById("lightbox-image");
-  lightboxImage.src = imgSrc;
-  lightbox.classList.add("active");
-}
-
-
- // Lightbox listener setup
-  function openLightboxHandler(e) {
-    const isValid = e.target.closest(".image-wrapper") || e.target.closest(".bento-photo");
-    if (!isValid) return;
-    openLightbox(e.target.src);
-  }
-
-  function attachLightboxListeners() {
-    const allLightboxImages = document.querySelectorAll(
-      ".bento-photo img, .image-wrapper img, .milestone-image img"
+  // Attach listeners to images/videos
+  window.attachLightboxListeners = function () {
+    const mediaElements = document.querySelectorAll(
+      ".bento-photo img, .image-wrapper img, .image-wrapper video, .milestone-image img, .milestone-image video"
     );
 
-    allLightboxImages.forEach((img) => {
-      img.style.cursor = "pointer";
-      img.removeEventListener("click", openLightboxHandler);
-      img.addEventListener("click", openLightboxHandler);
+    mediaElements.forEach((el) => {
+      el.style.cursor = "pointer";
+      el.addEventListener("click", () => {
+        const isVideo = el.tagName.toLowerCase() === "video";
+        openLightbox(el.getAttribute("src"), isVideo);
+      });
     });
-  }
+  };
+});
+
