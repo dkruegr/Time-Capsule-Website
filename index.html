@@ -311,7 +311,7 @@
 								<div class="form-group milestone-form-group">
 									<label for="milestoneFile">File</label>
 									<div class="file-input-container">
-										<input type="file" id="milestoneFile" name="milestoneFile" accept="image/*,video/*"/>
+										<input type="file" id="milestoneFile" name="milestoneFile" accept="image/*,video/*" multiple />
 										<label for="milestoneFile" class="file-input-label">
 											Choose File <span class="file-status">No file chosen</span>
 										</label>
@@ -376,6 +376,9 @@
 <div id="lightbox-scrim" class="lightbox-scrim hidden">
   <div class="lightbox-content" id="lightbox-content">
     <span class="lightbox-close" id="lightbox-close">&times;</span>
+	<button id="lightbox-prev" class="lightbox-nav">&#10094;</button>
+	<div id="lightbox-media-container"></div>
+    <button id="lightbox-next" class="lightbox-nav">&#10095;</button>
     <!-- <img id="lightbox-image" src="" alt="Expanded View" /> -->
   </div>
 </div>
