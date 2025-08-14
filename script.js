@@ -420,15 +420,18 @@ function initializeMilestoneActions() {
 
 	// Update file status when files are selected
 	if (fileInput && fileStatus) {
-		fileInput.addEventListener("change", (e) => {
-			const file = e.target.files[0];
-			if (!file) {
-				fileStatus.textContent = "No file chosen";
-			} else {
-				fileStatus.textContent = file.name;
-			}
-		});
-	}
+	fileInput.addEventListener("change", (e) => {
+		const files = Array.from(e.target.files);
+		if (files.length === 0) {
+			fileStatus.textContent = "No file chosen";
+		} else if (files.length === 1) {
+			fileStatus.textContent = files[0].name;
+		} else {
+			fileStatus.textContent = `${files.length} files selected`;
+		}
+	});
+}
+
 
 	// Handle milestone form submission
 	if (milestoneForm) {
@@ -439,9 +442,11 @@ function initializeMilestoneActions() {
 				alert("Please sign in to add milestones.");
 				return;
 			}
-
+            
+			// Multiple File Submission Support
 			const title = document.getElementById("milestoneTitle").value;
-			const file = fileInput.files[0];
+			const files = Array.from(fileInput.files); 
+
 			const date = document.getElementById("milestoneDate").value;
 			const submitButton = milestoneForm.querySelector('button[type="submit"]');
 
@@ -455,7 +460,7 @@ function initializeMilestoneActions() {
 			submitButton.textContent = "Saving...";
 
 			try {
-				await addMilestone(title, date, file);
+				await addMilestone(title, date, files);
 
 				// Close modal
 				addMilestoneModal.classList.remove("active");
@@ -490,58 +495,62 @@ function initializeMilestoneActions() {
 	});
 }
 
-// Add milestone to Firestore
-async function addMilestone(title, date, file) {
-	try {
-		console.log("Adding milestone:", { title, date, file });
+// Add milestone to Firestore (multiple file support)
+async function addMilestone(title, date, files) {
+  try {
+    console.log("Adding milestone (multi):", { title, date, files });
 
-		let imageUrl = null;
-		let imagePath = null;
-		let videoUrl = null;
-		let videoPath = null;
+    // Normalize files to an array of valid image/video types
+    const filesArr = Array.from(files || []).filter(
+      (f) => f && (f.type?.startsWith("image/") || f.type?.startsWith("video/"))
+    );
 
-		// Upload file if provided
-		if (file) {
-			console.log("Uploading file...");
-			const timestamp = Date.now();
-			const fileName = `milestones/${timestamp}_${file.name}`;
-			const storageRef = storage.ref(fileName);
+    const media = [];
 
-			const snapshot = await storageRef.put(file);
-			const downloadUrl = await snapshot.ref.getDownloadURL();
+    for (let i = 0; i < filesArr.length; i++) {
+      const file = filesArr[i];
+      const timestamp = Date.now();
+      const safeName = file.name.replace(/\s+/g, "_");
+      // (Optional) nest by user for tidy storage
+      const fileName = `milestones/${currentUser.uid}/${timestamp}_${i}_${safeName}`;
+      const storageRef = storage.ref(fileName);
 
-			// Check if it's a video or image
-			if (file.type.startsWith("video/")) {
-				videoUrl = downloadUrl;
-				videoPath = fileName;
-				console.log("Video uploaded successfully:", videoUrl);
-			} else if (file.type.startsWith("image/")) {
-				imageUrl = downloadUrl;
-				imagePath = fileName;
-				console.log("Image uploaded successfully:", imageUrl);
-			}
-		}
+      console.log("Uploading:", fileName);
+      const snapshot = await storageRef.put(file);
+      const url = await snapshot.ref.getDownloadURL();
 
-        // Add milestone document to Firestore
-		const milestoneData = {
-			title: title,
-			date: date,
-			imageUrl: imageUrl,
-			imagePath: imagePath,
-			videoUrl: videoUrl,
-			videoPath: videoPath,
-			createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-			userId: currentUser.uid,
-		};
+      const type = file.type.startsWith("video/") ? "video" : "image";
+      media.push({ type, url, path: fileName });
+      console.log(`Uploaded ${type}:`, url);
+    }
 
-		console.log("Saving milestone data:", milestoneData);
-		await db.collection("milestones").add(milestoneData);
-		console.log("Milestone added successfully");
-	} catch (error) {
-		console.error("Error adding milestone:", error);
-		throw error;
-	}
+    // Fallback fields for older UI bits (use the first of each kind)
+    let imageUrl = null, imagePath = null, videoUrl = null, videoPath = null;
+    const firstImage = media.find((m) => m.type === "image");
+    const firstVideo = media.find((m) => m.type === "video");
+    if (firstImage) { imageUrl = firstImage.url; imagePath = firstImage.path; }
+    if (firstVideo) { videoUrl = firstVideo.url; videoPath = firstVideo.path; }
+
+    const milestoneData = {
+      title,
+      date,
+      media, // <-- new array with ALL uploads
+      imageUrl, imagePath, // <-- keep for backward-compat
+      videoUrl, videoPath, // <-- keep for backward-compat
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      userId: currentUser.uid,
+    };
+
+    console.log("Saving milestone data:", milestoneData);
+    const docRef = await db.collection("milestones").add(milestoneData);
+    console.log("Milestone added successfully, id:", docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error("Error adding milestone:", error);
+    throw error;
+  }
 }
+
 
 // Load milestones from Firestore
 async function loadMilestones() {
@@ -558,8 +567,11 @@ async function loadMilestones() {
 		});
 
 		console.log("Loaded milestones:", milestones);
+		window.allMilestones = milestones;    // store globally for lightbox navigation
 		displayMilestones(milestones);
 		updateHomePage(milestones);
+
+
 		try {
   attachLightboxListeners();
 } catch (err) {
@@ -584,8 +596,11 @@ async function loadMilestones() {
 					});
 				});
 
+				window.allMilestones = milestones; 
 				displayMilestones(milestones);
 				updateHomePage(milestones);
+
+				
 				try {
   attachLightboxListeners();
 } catch (err) {
@@ -634,58 +649,83 @@ function displayMilestones(milestones) {
 		const milestoneCard = createMilestoneCard(milestone);
 		milestonesContainer.appendChild(milestoneCard);
 	});
+	attachLightboxListeners(); // <-- Important
 }
 
 // Create milestone card element
 function createMilestoneCard(milestone) {
-	const card = document.createElement("div");
-	card.className = "milestone-card";
-	card.dataset.milestoneId = milestone.id;
+    const card = document.createElement("div");
+    card.className = "milestone-card";
+    card.dataset.milestoneId = milestone.id;
+	card.dataset.media = milestone.media ? JSON.stringify(milestone.media) : "[]";
 
-	let mediaHtml = "";
-	if (milestone.videoUrl) {
-		mediaHtml = `<video src="${milestone.videoUrl}" controls></video>`;
-	} else if (milestone.imageUrl) {
-		mediaHtml = `<img src="${milestone.imageUrl}" alt="${milestone.title}">`;
-	}
 
-	card.innerHTML = `
-		<div class="milestone-image">
-			${mediaHtml}
-		</div>
-		<div>
-			<div class="blue-heading">${milestone.title}</div>
-			<p>${formatDate(milestone.date)}</p>
-		</div>
-		<button class="delete-milestone" title="Delete" style="${currentUser ? "display: block" : "display: none"}">
-			<img src="images/icons/trash.svg" alt="Delete" />
-		</button>
-	`;
+    // Use first media item for thumbnail
+    let thumbHtml = "";
+    let allMedia = [];
 
-	// Add delete functionality
-	const deleteBtn = card.querySelector(".delete-milestone");
-	deleteBtn.addEventListener("click", async () => {
-		if (!currentUser) {
-			alert("Please sign in to delete milestones.");
-			return;
-		}
+    if (milestone.media && Array.isArray(milestone.media) && milestone.media.length > 0) {
+        allMedia = milestone.media;
+        const first = milestone.media[0];
+        if (first.type === "video") {
+            thumbHtml = `<video src="${first.url}" muted playsinline preload="metadata"></video>`;
+        } else if (first.type === "image") {
+            thumbHtml = `<img src="${first.url}" alt="${milestone.title}">`;
+        }
+    } else {
+        // Fallback for old milestones
+        if (milestone.videoUrl) {
+            allMedia = [{ type: "video", url: milestone.videoUrl, path: milestone.videoPath }];
+            thumbHtml = `<video src="${milestone.videoUrl}" muted playsinline preload="metadata"></video>`;
+        } else if (milestone.imageUrl) {
+            allMedia = [{ type: "image", url: milestone.imageUrl, path: milestone.imagePath }];
+            thumbHtml = `<img src="${milestone.imageUrl}" alt="${milestone.title}">`;
+        }
+    }
 
-		if (confirm("Are you sure you want to delete this milestone?")) {
-			try {
-				// Pass both paths if available
-				await deleteMilestone(milestone.id, milestone.imagePath || milestone.videoPath);
-				card.remove();
-				await loadMilestones(); // Refresh to update home page
-				console.log("Milestone deleted successfully");
-			} catch (error) {
-				console.error("Error deleting milestone:", error);
-				alert("Error deleting milestone. Please try again.");
-			}
-		}
-	});
+    // Store full media array for Lightbox navigation
+    card.dataset.media = JSON.stringify(milestone.media || []);
 
-	return card;
+
+    card.innerHTML = `
+        <div class="milestone-image">
+            ${thumbHtml}
+        </div>
+        <div>
+            <div class="blue-heading">${milestone.title}</div>
+            <p>${formatDate(milestone.date)}</p>
+        </div>
+        <button class="delete-milestone" title="Delete" style="${currentUser ? "display: block" : "display: none"}">
+            <img src="images/icons/trash.svg" alt="Delete" />
+        </button>
+    `;
+
+    // Delete functionality
+    const deleteBtn = card.querySelector(".delete-milestone");
+    deleteBtn.addEventListener("click", async () => {
+        if (!currentUser) {
+            alert("Please sign in to delete milestones.");
+            return;
+        }
+
+        if (confirm("Are you sure you want to delete this milestone?")) {
+            try {
+                // Pass media array if available, else fallback single path
+                await deleteMilestone(milestone.id, milestone.media || milestone.imagePath || milestone.videoPath);
+                card.remove();
+                await loadMilestones();
+                console.log("Milestone deleted successfully");
+            } catch (error) {
+                console.error("Error deleting milestone:", error);
+                alert("Error deleting milestone. Please try again.");
+            }
+        }
+    });
+
+    return card;
 }
+
+
 
 // Delete milestone from Firestore and Storage
 async function deleteMilestone(milestoneId, imagePath) {
@@ -1016,50 +1056,90 @@ if (uploadButton) {
 // Lightbox Scrim Logic
 document.addEventListener("DOMContentLoaded", () => {
   const lightbox = document.getElementById("lightbox-scrim");
-  const lightboxContent = document.getElementById("lightbox-content");
+  const mediaContainer = document.getElementById("lightbox-media-container");
+  const closeBtn = document.getElementById("lightbox-close");
+  const prevBtn = document.getElementById("lightbox-prev");
+  const nextBtn = document.getElementById("lightbox-next");
+
+  let currentMedia = [];
+  let currentIndex = 0;
+
+  function showMedia(index) {
+    if (!currentMedia.length) return;
+    const media = currentMedia[index];
+    mediaContainer.innerHTML = "";
+
+    if (media.type === "video") {
+      const video = document.createElement("video");
+      video.src = media.url;
+      video.controls = true;
+      video.autoplay = false; // no autoplay
+      video.muted = true;     // muted preview
+      video.style.maxWidth = "100%";
+      video.style.maxHeight = "80vh";
+      mediaContainer.appendChild(video);
+    } else {
+      const img = document.createElement("img");
+      img.src = media.url;
+      img.alt = "";
+      img.style.maxWidth = "100%";
+      img.style.maxHeight = "80vh";
+      mediaContainer.appendChild(img);
+    }
+  }
+
+  function openLightbox(mediaArray, startIndex = 0) {
+    currentMedia = mediaArray;
+    currentIndex = startIndex;
+    showMedia(currentIndex);
+    lightbox.classList.add("active");
+  }
 
   function closeLightbox() {
     lightbox.classList.remove("active");
-    lightboxContent.innerHTML = `<span class="lightbox-close" id="lightbox-close">&times;</span>`;
-    document.getElementById("lightbox-close").addEventListener("click", closeLightbox);
+    currentMedia = [];
+    currentIndex = 0;
   }
 
-  // Open Lightbox
-  window.openLightbox = function (src, isVideo = false) {
-    // Reset and insert close button
-    lightboxContent.innerHTML = `<span class="lightbox-close" id="lightbox-close">&times;</span>`;
+  function showPrev() {
+    currentIndex = (currentIndex - 1 + currentMedia.length) % currentMedia.length;
+    showMedia(currentIndex);
+  }
 
-    // Add media
-    if (isVideo) {
-      lightboxContent.innerHTML += `<video src="${src}" controls autoplay style="max-width:100%; max-height:80vh;"></video>`;
-    } else {
-      lightboxContent.innerHTML += `<img src="${src}" alt="" style="max-width:100%; max-height:80vh;">`;
-    }
+  function showNext() {
+    currentIndex = (currentIndex + 1) % currentMedia.length;
+    showMedia(currentIndex);
+  }
 
-    lightbox.classList.add("active");
-
-    // Re-bind close button click
-    document.getElementById("lightbox-close").addEventListener("click", closeLightbox);
-  };
-
-  // Close when clicking background (outside media)
+  // Event Listeners
+  closeBtn.addEventListener("click", closeLightbox);
+  prevBtn.addEventListener("click", showPrev);
+  nextBtn.addEventListener("click", showNext);
   lightbox.addEventListener("click", (e) => {
     if (e.target === lightbox) closeLightbox();
   });
 
-  // Attach listeners to images/videos
+  // Attach to milestone cards
   window.attachLightboxListeners = function () {
-    const mediaElements = document.querySelectorAll(
-      ".bento-photo img, .image-wrapper img, .image-wrapper video, .milestone-image img, .milestone-image video"
-    );
-
-    mediaElements.forEach((el) => {
-      el.style.cursor = "pointer";
-      el.addEventListener("click", () => {
-        const isVideo = el.tagName.toLowerCase() === "video";
-        openLightbox(el.getAttribute("src"), isVideo);
+    const milestoneCards = document.querySelectorAll(".milestone-card");
+    milestoneCards.forEach(card => {
+      card.querySelectorAll(".milestone-image img, .milestone-image video").forEach((el, idx) => {
+        el.style.cursor = "pointer";
+        el.addEventListener("click", () => {
+          const milestoneId = card.dataset.milestoneId;
+          const milestone = window.allMilestones?.find(m => m.id === milestoneId);
+          if (milestone && milestone.media && milestone.media.length) {
+            openLightbox(milestone.media, idx);
+          } else {
+            // Fallback to single media
+            openLightbox([{ type: el.tagName.toLowerCase() === "video" ? "video" : "image", url: el.src }]);
+          }
+        });
       });
     });
   };
 });
+
+
+
 
