@@ -668,7 +668,37 @@ function displayMilestones(milestones) {
     milestonesContainer.appendChild(milestoneCard);
   });
   attachLightboxListeners(); // <-- Important
+  initLazyLoading();
 }
+
+function initLazyLoading() {
+  const lazyMedia = document.querySelectorAll(".lazy-thumb");
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const src = el.getAttribute("data-src");
+
+        if (src) {
+          // load image/video
+          el.setAttribute("src", src);
+          el.removeAttribute("data-src");
+
+          // add fade-in effect
+          el.classList.add("loaded");
+        }
+
+        obs.unobserve(el);
+      }
+    });
+  }, { rootMargin: "150px" }); // load just before scrolling into view
+
+  lazyMedia.forEach(el => observer.observe(el));
+}
+
+
+
 
 // Create milestone card element
 function createMilestoneCard(milestone) {
@@ -710,9 +740,9 @@ function createMilestoneCard(milestone) {
   const first = allMedia[0];
   if (first) {
     if (first.type === "video") {
-      thumbHtml = `<video src="${first.url}" muted playsinline preload="metadata"></video>`;
+      thumbHtml = `<video class="lazy-thumb" data-src="${first.url}" muted playsinline preload="metadata"></video>`;
     } else {
-      thumbHtml = `<img src="${first.url}" alt="${milestone.title}">`;
+      thumbHtml = `<img class="lazy-thumb" data-src="${first.url}" alt="${milestone.title}">`;
     }
   }
 

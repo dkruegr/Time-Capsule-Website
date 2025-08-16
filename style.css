@@ -1231,3 +1231,14 @@ section {
 #lightbox-next {
   right: -60px;
 }
+
+/* Initial state for lazy-loaded images */
+.lazy-thumb {
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+}
+
+/* When loaded, fade them in */
+.lazy-thumb.loaded {
+  opacity: 1;
+}
