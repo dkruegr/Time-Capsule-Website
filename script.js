@@ -509,12 +509,17 @@ function initializeMilestoneActions() {
   });
 }
 
-// Add milestone to Firestore (multiple file support)
+// Add milestone to Firestore (Multi file support with progress bar)
 async function addMilestone(title, date, files) {
   try {
     console.log("Adding milestone (multi):", { title, date, files });
 
-    // Normalize files to an array of valid image/video types
+    const progressContainer = document.querySelector(".upload-progress");
+    const progressBar = document.getElementById("uploadProgressBar");
+
+    if (progressContainer) progressContainer.style.display = "block";
+    if (progressBar) progressBar.style.width = "0%";
+
     const filesArr = Array.from(files || []).filter(
       (f) => f && (f.type?.startsWith("image/") || f.type?.startsWith("video/"))
     );
@@ -525,20 +530,40 @@ async function addMilestone(title, date, files) {
       const file = filesArr[i];
       const timestamp = Date.now();
       const safeName = file.name.replace(/\s+/g, "_");
-      // (Optional) nest by user for tidy storage
       const fileName = `milestones/${currentUser.uid}/${timestamp}_${i}_${safeName}`;
       const storageRef = storage.ref(fileName);
 
       console.log("Uploading:", fileName);
-      const snapshot = await storageRef.put(file);
-      const url = await snapshot.ref.getDownloadURL();
 
-      const type = file.type.startsWith("video/") ? "video" : "image";
-      media.push({ type, url, path: fileName });
-      console.log(`Uploaded ${type}:`, url);
+      // Track progress per file
+      await new Promise((resolve, reject) => {
+        const uploadTask = storageRef.put(file);
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+            // Average progress across all files
+            const totalProgress = ((i + progress / 100) / filesArr.length) * 100;
+
+            if (progressBar) {
+              progressBar.style.width = `${Math.floor(totalProgress)}%`;
+            }
+          },
+          (error) => reject(error),
+          async () => {
+            const url = await uploadTask.snapshot.ref.getDownloadURL();
+            const type = file.type.startsWith("video/") ? "video" : "image";
+            media.push({ type, url, path: fileName });
+            resolve();
+          }
+        );
+      });
     }
 
-    // Fallback fields for older UI bits (use the first of each kind)
+    // Fallback single fields
     let imageUrl = null,
       imagePath = null,
       videoUrl = null,
@@ -557,24 +582,31 @@ async function addMilestone(title, date, files) {
     const milestoneData = {
       title,
       date,
-      media, // <-- new array with ALL uploads
+      media,
       imageUrl,
-      imagePath, // <-- keep for backward-compat
+      imagePath,
       videoUrl,
-      videoPath, // <-- keep for backward-compat
+      videoPath,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       userId: currentUser.uid,
     };
 
-    console.log("Saving milestone data:", milestoneData);
     const docRef = await db.collection("milestones").add(milestoneData);
     console.log("Milestone added successfully, id:", docRef.id);
+
+    if (progressBar) progressBar.style.width = "100%";
+    setTimeout(() => {
+      if (progressContainer) progressContainer.style.display = "none";
+      if (progressBar) progressBar.style.width = "0%";
+    }, 1000);
+
     return docRef.id;
   } catch (error) {
     console.error("Error adding milestone:", error);
     throw error;
   }
 }
+
 
 // Load milestones from Firestore
 async function loadMilestones() {
