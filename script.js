@@ -1143,14 +1143,25 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeBtn = document.getElementById("lightbox-close");
   const prevBtn = document.getElementById("lightbox-prev");
   const nextBtn = document.getElementById("lightbox-next");
+  const spinner = document.getElementById("lightbox-spinner"); 
 
   let currentMedia = [];
   let currentIndex = 0;
+
+  function showSpinner() {
+    if (spinner) spinner.style.display = "block";
+  }
+
+  function hideSpinner() {
+    if (spinner) spinner.style.display = "none";
+  }
 
   function showMedia(index) {
     if (!currentMedia.length) return;
     const media = currentMedia[index];
     mediaContainer.innerHTML = "";
+
+    showSpinner(); // start loading
 
     if (media.type === "video") {
       const video = document.createElement("video");
@@ -1160,6 +1171,11 @@ document.addEventListener("DOMContentLoaded", () => {
       video.muted = true; // muted preview
       video.style.maxWidth = "100%";
       video.style.maxHeight = "80vh";
+
+      // hide spinner when video metadata is ready
+      video.addEventListener("loadeddata", hideSpinner);
+      video.addEventListener("error", hideSpinner);
+
       mediaContainer.appendChild(video);
     } else {
       const img = document.createElement("img");
@@ -1167,6 +1183,11 @@ document.addEventListener("DOMContentLoaded", () => {
       img.alt = "";
       img.style.maxWidth = "100%";
       img.style.maxHeight = "80vh";
+
+      // hide spinner when image is loaded
+      img.onload = hideSpinner;
+      img.onerror = hideSpinner;
+
       mediaContainer.appendChild(img);
     }
   }
@@ -1182,6 +1203,7 @@ document.addEventListener("DOMContentLoaded", () => {
     lightbox.classList.remove("active");
     currentMedia = [];
     currentIndex = 0;
+	hideSpinner();
   }
 
   function showPrev() {
