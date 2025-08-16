@@ -1165,6 +1165,34 @@ document.addEventListener("DOMContentLoaded", () => {
     showMedia(currentIndex);
   }
 
+  // --- Swipe support for mobile ---
+let touchStartX = 0;
+let touchEndX = 0;
+
+function handleSwipe() {
+  const swipeDistance = touchEndX - touchStartX;
+
+  if (swipeDistance > 50) {
+    // Swipe right → previous media
+    showPrev();
+  } else if (swipeDistance < -50) {
+    // Swipe left → next media
+    showNext();
+  }
+}
+
+const lightboxContent = document.getElementById("lightbox-content");
+
+lightboxContent.addEventListener("touchstart", (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+});
+
+lightboxContent.addEventListener("touchend", (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+});
+
+
   // Event Listeners
   closeBtn.addEventListener("click", closeLightbox);
   prevBtn.addEventListener("click", showPrev);
