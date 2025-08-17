@@ -21,6 +21,22 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
 
+// // Monitor auth state
+// auth.onAuthStateChanged((user) => {
+//   if (user) {
+//     currentUser = user;
+//     console.log("User is logged in:", user.email);
+//     showPage("milestones-page");
+//     updateHeaderCTA("home");
+//     loadMilestones(); // optionally load right away
+//   } else {
+//     currentUser = null;
+//     console.log("User is logged out");
+//     showPage("home");
+//   }
+// });
+
+
 // Configure Firestore settings
 db.settings({
   timestampsInSnapshots: true,
