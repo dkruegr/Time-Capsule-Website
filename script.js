@@ -1,5 +1,5 @@
 // Set baby's birth date
-const birthDate = new Date("2024-10-04T00:00:00"); // <-- Edit as needed
+const birthDate = new Date(2024, 9, 4); // <-- Edit as needed
 
 // Initialize authentication state
 let currentUser = null;
@@ -54,38 +54,33 @@ function getAge(dateOfBirth) {
   const now = new Date();
   const ageDiff = now - dateOfBirth;
   const days = Math.floor(ageDiff / (1000 * 60 * 60 * 24));
+
   const years = now.getFullYear() - dateOfBirth.getFullYear();
   const hasHadBirthdayThisYear =
     now.getMonth() > dateOfBirth.getMonth() ||
     (now.getMonth() === dateOfBirth.getMonth() &&
       now.getDate() >= dateOfBirth.getDate());
+
   const adjustedYears = hasHadBirthdayThisYear ? years : years - 1;
   return { years: adjustedYears, days };
 }
 
+// Always count down to the NEXT birthday (not monthly milestones)
 function getNextMilestone(birthDate) {
   const now = new Date();
-  const age = getAge(birthDate);
-  let targetDate;
-
-  if (age.years < 1) {
-    // Count months since birth
-    const monthsSinceBirth =
-      (now.getFullYear() - birthDate.getFullYear()) * 12 +
-      (now.getMonth() - birthDate.getMonth());
-    const nextMonth = monthsSinceBirth + 1;
-    targetDate = new Date(birthDate);
-    targetDate.setMonth(birthDate.getMonth() + nextMonth);
-  } else {
-    //  Annual birthday after 1 year
-    targetDate = new Date(birthDate);
-    targetDate.setFullYear(now.getFullYear());
-    if (now >= targetDate) {
-      targetDate.setFullYear(now.getFullYear() + 1);
-    }
+  let target = new Date(
+    now.getFullYear(),
+    birthDate.getMonth(),
+    birthDate.getDate()
+  );
+  if (target <= now) {
+    target = new Date(
+      now.getFullYear() + 1,
+      birthDate.getMonth(),
+      birthDate.getDate()
+    );
   }
-
-  return targetDate;
+  return target;
 }
 
 function updateCountdown() {
@@ -117,6 +112,7 @@ function updateAge() {
     age.years !== 1 ? "s" : ""
   } and ${age.days} day${age.days !== 1 ? "s" : ""}`;
 }
+
 
 function generateCalendar() {
   const now = new Date();
